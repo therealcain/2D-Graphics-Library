@@ -7,6 +7,8 @@ Big thanks to this repo: https://github.com/nothings/stb
 
 This library using quite old functionality of OpenGL, because i planned it to work on older graphics card aswell.
 
+This library also giving you basic functionality to interact with keyboard and mouse!
+
 # To Compile on Linux:
 g++ file.cpp -lGL -lX11
 
