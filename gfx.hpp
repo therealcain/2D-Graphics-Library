@@ -498,7 +498,6 @@ namespace gfx
         void create_window_linux()
         {
 #if LINUX
-            // Opening the display
             display = XOpenDisplay(nullptr);
             if (display == nullptr)
                 throw std::runtime_error("[LINUX] Could not open display!");
@@ -510,7 +509,6 @@ namespace gfx
 
             XSelectInput(display, window, PointerMotionMask | ButtonPressMask);
 
-            // Show the window
             XClearWindow(display, window);
             XMapRaised(display, window);
 #endif
@@ -530,7 +528,7 @@ namespace gfx
         inline bool check_events_linux() noexcept
         {
 #if LINUX
-            XNextEvent(display, &ev);
+            XCheckWindowEvent(display, window, 1, &ev);
 
             return true;
 #endif
@@ -548,8 +546,6 @@ namespace gfx
 
             if (majorGLX <= 1 && minorGLX < 2)
                 throw std::runtime_error("[LINUX] GLX 1.2 or greater is required!");
-            // else
-            //     std::cout << "[LINUX] GLX Version: " << majorGLX << "." << minorGLX << std::endl;
 #endif
         }
 
@@ -739,8 +735,9 @@ namespace gfx
         static inline VectorI motion_linux(Renderer& renderer) noexcept
         {
 #if LINUX
-            auto& ev = renderer.ev;
-            return { ev.xmotion.x, ev.xmotion.y };
+            // TODO FIX THIS LAG
+            XNextEvent(renderer.display, &renderer.ev);
+            return { renderer.ev.xmotion.x, renderer.ev.xmotion.y };
 #endif
             return { 0, 0 };
         }
