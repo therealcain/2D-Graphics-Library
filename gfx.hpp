@@ -129,7 +129,11 @@ namespace gfx
         explicit Renderer(const VectorUI& Size)
             : size(Size)
         {
-            create_window();
+#if WINDOWS
+            create_window_windows();
+#elif LINUX
+            create_window_linux();
+#endif
         }
 
         // This function handling the events and returns
@@ -140,7 +144,7 @@ namespace gfx
         bool is_running() noexcept
         {
 #if !ONLY_OPENGL_CONTEXT
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            glClear(GL_COLOR_BUFFER_BIT);
 
             glViewport(0, 0, size.x, size.y);
             glMatrixMode(GL_PROJECTION);
@@ -328,23 +332,6 @@ namespace gfx
         // This is calling all of the clean ups
         ~Renderer()
         {
-            destroy_window();
-        }
-
-    private: // Functions
-        // Create window either windows or linux
-        inline void create_window()
-        {
-#if WINDOWS
-            create_window_windows();
-#elif LINUX
-            create_window_linux();
-#endif
-        }
-
-        // Destroy window either windows or linux
-        inline void destroy_window()
-        {
 #if WINDOWS
             destroy_window_windows();
 #elif LINUX
@@ -352,6 +339,7 @@ namespace gfx
 #endif
         }
 
+    private: // Functions
         // ----------------------------------------------------------- //
         // --------------------- WINDOWS ----------------------------- //
         // ----------------------------------------------------------- // 
@@ -387,7 +375,7 @@ namespace gfx
                 class_registered = true;
             }
 
-            hwnd = CreateWindow(WINDOW_CLASS_NAME, L"", WS_OVERLAPPEDWINDOW | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT,
+            hwnd = CreateWindow(WINDOW_CLASS_NAME, L"", WS_OVERLAPPED | WS_MINIMIZEBOX | WS_SYSMENU | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT,
                 rc.right - rc.left, rc.bottom - rc.top, nullptr, nullptr, instance, nullptr);
 
             if (hwnd == nullptr)
@@ -405,8 +393,6 @@ namespace gfx
         // Windows events handling
         static LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
         {
-            MSLLHOOKSTRUCT* mouse_struct = reinterpret_cast<MSLLHOOKSTRUCT*>(lParam);
-
             switch (msg)
             {
             case WM_DESTROY:
@@ -471,7 +457,7 @@ namespace gfx
 #if WINDOWS
             if (class_registered)
             {
-                UnregisterClass(WINDOW_CLASS_NAME, instance);
+                UnregisterClassW(WINDOW_CLASS_NAME, instance);
                 class_registered = false;
             }
 #endif
@@ -600,7 +586,11 @@ namespace gfx
 #endif
         }
 
+#if !ONLY_OPENGL_CONTEXT
     private: // Variables
+#else
+    public: // Variables
+#endif
 #if WINDOWS
         HWND hwnd;
         HINSTANCE instance;
