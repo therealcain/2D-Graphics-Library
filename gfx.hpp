@@ -921,4 +921,3 @@ namespace gfx
 // Fixed linux update to update automatically nonstop
 // Fixed linux input lags
 // Fixed windows update to update automatically nonstop
-// TODO need to fix threading support
