@@ -608,6 +608,13 @@ namespace gfx
             std::cout << "[LINUX] GL Renderer: " << glGetString(GL_RENDERER) << std::endl;
             std::cout << "[LINUX] GL Version: " << glGetString(GL_VERSION) << std::endl;
             std::cout << "[LINUX] GL Shading Language: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
+
+            XSizeHints hints;
+            hints.min_width  = size.x;
+            hints.min_height = size.y;
+            hints.max_width  = size.x;
+            hints.max_height = size.y;
+            XSetWMNormalHints(display, window, &hints);
 #endif
         }
 
