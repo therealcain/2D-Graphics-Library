@@ -13,7 +13,7 @@ int main()
         auto pos = gfx::Mouse::motion(window);
         std::cout << pos.x << " " << pos.y << std::endl;
 
-        window.draw_texture(tuxTex, gfx::VectorUI(200, 200), { 150, 150 });
+        window.draw_texture(tuxTex, gfx::VectorUI(pos.x, pos.y), { 150, 150 });
 
         window.show();
     }

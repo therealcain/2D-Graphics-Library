@@ -462,9 +462,9 @@ namespace gfx
             }
 #endif
         }
-
+#if WINDOWS
         static void CALLBACK force_update_windows() {}
-
+#endif
         // Check all of the events for the window windows
         bool check_events_windows() noexcept
         {
@@ -730,9 +730,22 @@ namespace gfx
         static inline VectorI motion_linux(Renderer& renderer) noexcept
         {
 #if LINUX
-            // TODO FIX THIS LAG
-            XNextEvent(renderer.display, &renderer.ev);
-            return { renderer.ev.xmotion.x, renderer.ev.xmotion.y };
+            static VectorI vec;
+
+            while(XPending(renderer.display))
+            {
+                XNextEvent(renderer.display, &renderer.ev);
+
+                if(renderer.ev.type == MotionNotify)
+                {
+                    vec.x = renderer.ev.xmotion.x;
+                    vec.y = renderer.ev.xmotion.y;
+                }
+
+                XFlush(renderer.display);
+            }
+
+            return vec;
 #endif
             return { 0, 0 };
         }
