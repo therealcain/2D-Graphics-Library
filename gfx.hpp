@@ -477,14 +477,19 @@ namespace gfx
 #endif
         }
 
+        static void CALLBACK force_update_windows() {}
+
         // Check all of the events for the window windows
         bool check_events_windows() noexcept
         {
 #if WINDOWS
             if (GetMessage(&msg, nullptr, 0, 0) > 0)
             {
+                SetTimer(hwnd, 0, 0, reinterpret_cast<TIMERPROC>(&force_update_windows));
+
                 TranslateMessage(&msg);
                 DispatchMessage(&msg);
+
                 return true;
             }
 #endif
