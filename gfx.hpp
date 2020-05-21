@@ -881,7 +881,7 @@ namespace gfx
         }
 
         // This function checks if a key pressed only on linux
-        static inline bool key_pressed_linux(unsigned int key) noexcept
+        static bool key_pressed_linux(unsigned int key) noexcept
         {
 #if LINUX
             Display* dpy = XOpenDisplay(":0");
