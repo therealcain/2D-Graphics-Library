@@ -92,9 +92,9 @@ namespace gfx
 
     // Color codes
     Color ColorBlack = { 0  , 0  , 0  , 1 };
-    Color ColorRed = { 255, 0  , 0  , 1 };
+    Color ColorRed   = { 255, 0  , 0  , 1 };
     Color ColorGreen = { 0  , 255, 0  , 1 };
-    Color ColorBlue = { 0  , 0  , 255, 1 };
+    Color ColorBlue  = { 0  , 0  , 255, 1 };
     Color ColorWhite = { 255, 255, 255, 1 };
 
     // This is going to hold the texture
@@ -106,9 +106,12 @@ namespace gfx
         friend class Renderer;
     };
 
-
-
-
+    inline VectorI cast_to_vectorI(const VectorUI& src) noexcept {
+        return VectorI(src.x, src.y);
+    }
+    inline VectorUI cast_to_vectorUI(const VectorI& src) noexcept {
+        return VectorUI(src.x, src.y);
+    }
 
     // ----------------------------------------------------------- //
     // ----------------------------------------------------------- //
@@ -327,8 +330,8 @@ namespace gfx
             glDisable(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, 0);
         }
-
 #endif
+
         // This is calling all of the clean ups
         ~Renderer()
         {
@@ -732,11 +735,11 @@ namespace gfx
 #if LINUX
             static VectorI vec;
 
-            while(XPending(renderer.display))
+            while (XPending(renderer.display))
             {
                 XNextEvent(renderer.display, &renderer.ev);
 
-                if(renderer.ev.type == MotionNotify)
+                if (renderer.ev.type == MotionNotify)
                 {
                     vec.x = renderer.ev.xmotion.x;
                     vec.y = renderer.ev.xmotion.y;
