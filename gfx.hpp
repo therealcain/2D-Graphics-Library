@@ -42,9 +42,13 @@
 #include <cstring>
 #include <memory>
 #include <vector>
+#include <ostream>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+
+constexpr double PI = 3.141592653589793238462643383;
+constexpr double PI2 = PI * 2;
 
 namespace gfx
 {
@@ -69,6 +73,10 @@ namespace gfx
         Vector() = default;
         Vector(T X, T Y)
             : x(X), y(Y) {}
+        inline friend std::ostream& operator<<(std::ostream& os, const Vector<T>& vec) {
+            os << "X: " << vec.x << " Y:" << vec.y;
+            return os;
+        }
     };
 
     // Type definitions
@@ -88,6 +96,11 @@ namespace gfx
             : R(red), G(green), B(blue), A(1) {}
         Color(uint16_t red, uint16_t green, uint16_t blue, uint16_t alpha)
             : R(red), G(green), B(blue), A(alpha) {}
+
+        inline friend std::ostream& operator<<(std::ostream& os, const Color& color) {
+            os << "R: " << color.R << " G:" << color.G << " B:" << color.B << " A:" << color.A;
+            return os;
+        }
     }; // Color
 
     // Color codes
@@ -106,12 +119,9 @@ namespace gfx
         friend class Renderer;
     };
 
-    inline VectorI cast_to_vectorI(const VectorUI& src) noexcept {
-        return VectorI(src.x, src.y);
-    }
-    inline VectorUI cast_to_vectorUI(const VectorI& src) noexcept {
-        return VectorUI(src.x, src.y);
-    }
+
+
+
 
     // ----------------------------------------------------------- //
     // ----------------------------------------------------------- //
@@ -130,7 +140,7 @@ namespace gfx
         // This constructor makes a window with a specific size
         // that the user set
         explicit Renderer(const VectorUI& Size)
-            : size(Size)
+            : size(Size), running(true)
         {
 #if WINDOWS
             create_window_windows();
@@ -189,6 +199,11 @@ namespace gfx
 #endif
         }
 
+        // Force an exit from the window
+        inline void exit() noexcept {
+            running = false;
+        }
+
         // Change the title of the window
         void set_title(const std::string& title) noexcept
         {
@@ -240,9 +255,6 @@ namespace gfx
         // in a specific color
         void draw_circle(const VectorUI& position, double radius, const Color& color, bool fill) const noexcept
         {
-            constexpr double PI = 3.141592653589793238462643383;
-            constexpr double PI2 = PI * 2;
-
             glColor4ub(color.R, color.G, color.B, color.A);
 
             if (fill)
@@ -472,14 +484,15 @@ namespace gfx
         bool check_events_windows() noexcept
         {
 #if WINDOWS
+            
             if (GetMessage(&msg, nullptr, 0, 0) > 0)
             {
-                SetTimer(hwnd, 0, 0, reinterpret_cast<TIMERPROC>(&force_update_windows));
+                SetTimer(hwnd, 0, 1, reinterpret_cast<TIMERPROC>(&force_update_windows));
 
                 TranslateMessage(&msg);
                 DispatchMessage(&msg);
 
-                return true;
+                return running;
             }
 #endif
             return false;
@@ -524,7 +537,7 @@ namespace gfx
 #if LINUX
             XCheckWindowEvent(display, window, 1, &ev);
 
-            return true;
+            return running;
 #endif
             return false;
         }
@@ -610,7 +623,7 @@ namespace gfx
 
         XEvent ev;
 #endif
-
+        bool running;
         VectorUI size;
 
         friend class Mouse;
