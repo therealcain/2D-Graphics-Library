@@ -40,14 +40,13 @@
 #include <cstdio>
 #include <cstdint>
 #include <cstring>
-#include <memory>
-#include <vector>
 #include <ostream>
+#include <ctime>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-constexpr double PI = 3.141592653589793238462643383;
+constexpr double PI = 3.14159265358979323;
 constexpr double PI2 = PI * 2;
 
 namespace gfx
@@ -73,6 +72,7 @@ namespace gfx
         Vector() = default;
         Vector(T X, T Y)
             : x(X), y(Y) {}
+
         inline friend std::ostream& operator<<(std::ostream& os, const Vector<T>& vec) {
             os << "X: " << vec.x << " Y:" << vec.y;
             return os;
@@ -168,6 +168,8 @@ namespace gfx
             glLoadIdentity();
 #endif
 
+            current_ticks = clock();
+
 #if WINDOWS
             return check_events_windows();
 #elif LINUX
@@ -187,15 +189,16 @@ namespace gfx
 
         // Swapping the render pipeline buffers
         // to draw anything
-        inline void show() noexcept
-        {
 #if !ONLY_OPENGL_CONTEXT
+        inline void show() noexcept
+#else
+        inline void swap_buffers() noexcept
+#endif
+        {
 #if WINDOWS
             SwapBuffers(GetDC(hwnd));
 #elif LINUX
             glXSwapBuffers(display, window);
-#endif
-            glFlush();
 #endif
         }
 
@@ -215,9 +218,15 @@ namespace gfx
 #endif
         }
 
-        inline VectorUI get_size() const noexcept {
-            return size;
+        // Get frame time to make a better benchmarking
+        float get_frame_time() noexcept 
+        {
+            delta_ticks = clock() - current_ticks;
+
+            if (delta_ticks > 0)
+                return CLOCKS_PER_SEC / delta_ticks;
         }
+
 
 #if !ONLY_OPENGL_CONTEXT
         // ------------- DRAWING --------------------- //
@@ -264,8 +273,8 @@ namespace gfx
                 for (int i = 0; i <= 20; i++)
                 {
                     Vector<float> temp;
-                    temp.x = position.x + (radius * cos(i * PI2 / 20));
-                    temp.y = position.y + (radius * sin(i * PI2 / 20));
+                    temp.x = position.x + (radius * cosf(i * PI2 / 20));
+                    temp.y = position.y + (radius * sinf(i * PI2 / 20));
 
                     glVertex2f(temp.x, temp.y);
                 }
@@ -487,7 +496,7 @@ namespace gfx
             
             if (GetMessage(&msg, nullptr, 0, 0) > 0)
             {
-                SetTimer(hwnd, 0, 1, reinterpret_cast<TIMERPROC>(&force_update_windows));
+                SetTimer(hwnd, 0, 10, reinterpret_cast<TIMERPROC>(&force_update_windows));
 
                 TranslateMessage(&msg);
                 DispatchMessage(&msg);
@@ -625,6 +634,9 @@ namespace gfx
 #endif
         bool running;
         VectorUI size;
+
+        clock_t current_ticks;
+        clock_t delta_ticks;
 
         friend class Mouse;
     }; // Renderer
