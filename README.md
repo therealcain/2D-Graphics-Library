@@ -9,8 +9,4 @@ This library using quite old functionality of OpenGL, because i planned it to wo
 
 This library also giving you basic functionality to interact with keyboard and mouse!
 
-# To Compile on Linux:
-g++ file.cpp -lGL -lX11
-
-# To Compile on Windows
-You don't need to do anything other than compiling with visual studio.
+<script src="https://gist.github.com/therealcain/98d492811258865d0d8311f7e7f46d0d.js"></script>
