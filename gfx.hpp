@@ -95,7 +95,7 @@
 #ifdef M_PI
 constexpr double PI = M_PI;
 #else
-constexpr double PI = 3.14159265358979323
+constexpr double PI = 3.14159265358979323;
 #endif
 constexpr double PI2 = PI * 2;
 
