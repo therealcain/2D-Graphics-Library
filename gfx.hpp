@@ -50,7 +50,7 @@
 #if MSVC
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glu32.lib")
-#endif
+#endif // MSVC
 
 // ----------------------------------------------------------- //
 
@@ -68,7 +68,7 @@
 #include <GL/gl.h> 
 #include <GL/glu.h>
 #include <GL/glx.h>
-#endif
+#endif // Linux
 
 // ----------------------------------------------------------- //
 
@@ -126,7 +126,7 @@ namespace gfx
             os << "X: " << vec.x << " Y:" << vec.y;
             return os;
         }
-    };
+    }; // Vector
 
     // Type definitions
     using VectorI = Vector<int>;
@@ -226,7 +226,7 @@ namespace gfx
             // treated as the model view
             glMatrixMode(GL_MODELVIEW);
             glLoadIdentity();
-#endif
+#endif // !ONLY_OPENGL_CONTEXT
 
             // This is for calculating the frame time 
             // from each update
@@ -264,7 +264,7 @@ namespace gfx
         // understandable name for people that wants
         // to understand a little bit better
         inline void swap_buffers() noexcept
-#endif
+#endif // !ONLY_OPENGL_CONTEXT
         {
 #if WINDOWS
             SwapBuffers(GetDC(hwnd));
@@ -443,7 +443,7 @@ namespace gfx
             glDisable(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, 0);
         }
-#endif
+#endif // !ONLY_OPENGL_CONTEXT
 
         // ----------------------------------------------------------- //
 
