@@ -14,7 +14,7 @@
 // ------------                                          //
 // Windows:                                              //
 // MSVC: Just to build and run :)                        //
-// MinGW: g++ main.cpp -lopeng32 -lglu32 -lgdi32         //
+// MinGW: g++ main.cpp -lopengl32 -lglu32 -lgdi32        //
 // ----------------------------------------------------- //
 // If you don't planning on using the opengl             //
 // functionalities and only using the input and window   //
@@ -37,7 +37,7 @@
 #if MINGW
 #define _UNICODE
 #define UNICODE
-#endif
+#endif // MINGW
 
 // ----------------------------------------------------------- //
 
@@ -125,8 +125,18 @@ namespace gfx
     }; // Vector
 
     // Type definitions
-    using VectorI = Vector<int>;
+    using VectorI  = Vector<int>;
     using VectorUI = Vector<uint32_t>;
+    using VectorF  = Vector<float>;
+
+    // A very simple function that going to ease on casting vector
+    // to another vector of another type.
+    // there is no need for SFINAE here because Vector<T> is going
+    // to check the type anyway.
+    template<typename T, typename U>
+    inline Vector<T> cast_vector(const Vector<U>& src) {
+        return Vector<T>(static_cast<T>(src.x), static_cast<T>(src.y));
+    }
 
     // ----------------------------------------------------------- //
 
@@ -169,7 +179,7 @@ namespace gfx
     struct Texture
     {
     protected:
-        unsigned int id;
+        uint32_t id;
 
         friend class Renderer;
     };
@@ -188,7 +198,7 @@ namespace gfx
     public:
         // Creates a Renderer with a given size
         explicit Renderer(const VectorUI& Size)
-            : size(Size), running(true)
+            : running(true), size(Size)
         {
 #if WINDOWS
             create_window_windows();
@@ -1024,9 +1034,9 @@ namespace gfx
         static inline bool key_pressed(Key key) noexcept
         {
 #if WINDOWS
-            return key_pressed_windows(static_cast<unsigned int>(key));
+            return key_pressed_windows(static_cast<uint32_t>(key));
 #elif LINUX
-            return key_pressed_linux(static_cast<unsigned int>(key));
+            return key_pressed_linux(static_cast<uint32_t>(key));
 #endif
             return false;
         }
@@ -1034,7 +1044,7 @@ namespace gfx
         // This function is an overload to the function above
         // but checks a specific key that is not exists in the enum
         // If you want OS specific, you can just write -1 in one of the parameters.
-        static inline bool key_pressed(unsigned int windows_key, unsigned int linux_key) noexcept
+        static inline bool key_pressed(uint32_t windows_key, uint32_t linux_key) noexcept
         {
 #if WINDOWS
             return key_pressed_windows(windows_key);
@@ -1047,7 +1057,7 @@ namespace gfx
 
     private:
         // This function checks if a key pressed only on windows
-        static inline bool key_pressed_windows(unsigned int key) noexcept
+        static inline bool key_pressed_windows(uint32_t key) noexcept
         {
 #if WINDOWS
             return GetKeyState(key) & 0x8000;
@@ -1056,7 +1066,7 @@ namespace gfx
         }
 
         // This function checks if a key pressed only on linux
-        static bool key_pressed_linux(unsigned int key) noexcept
+        static bool key_pressed_linux(uint32_t key) noexcept
         {
 #if LINUX
             // Creating a display that is never going to 
