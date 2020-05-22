@@ -325,6 +325,19 @@ namespace gfx
 
 #if !ONLY_OPENGL_CONTEXT
         // ------------- DRAWING --------------------- //
+        // Drawing a pixel at a specific position with a 
+        // particular color.
+        void draw_pixel(const VectorUI& position, const Color& color)
+        {
+            glColor4ub(color.R, color.G, color.B, color.A);
+
+            glBegin(GL_POINTS);
+            glVertex2f(position.x, position.y);
+            glEnd();
+
+            glColor4f(1.f, 1.f, 1.f, 1.f);
+        }
+
         // Drawing a line from starting position to end position 
         // in a specific color
         void draw_line(const VectorUI& start_pos, const VectorUI& end_pos, const Color& color) const noexcept
