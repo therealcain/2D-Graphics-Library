@@ -161,9 +161,9 @@ namespace gfx
 
     // Color codes
     Color ColorBlack = { 0  , 0  , 0  , 1 };
-    Color ColorRed   = { 255, 0  , 0  , 1 };
+    Color ColorRed = { 255, 0  , 0  , 1 };
     Color ColorGreen = { 0  , 255, 0  , 1 };
-    Color ColorBlue  = { 0  , 0  , 255, 1 };
+    Color ColorBlue = { 0  , 0  , 255, 1 };
     Color ColorWhite = { 255, 255, 255, 1 };
 
     // ----------------------------------------------------------- //
@@ -190,12 +190,13 @@ namespace gfx
     class Renderer
     {
     public:
-       // Creates a Renderer with a given size
+        // Creates a Renderer with a given size
         explicit Renderer(const VectorUI& Size)
             : size(Size), running(true)
         {
 #if WINDOWS
             create_window_windows();
+            hdc = GetDC(hwnd);
 #elif LINUX
             create_window_linux();
 #endif
@@ -257,7 +258,7 @@ namespace gfx
         // Swapping the render pipeline buffers
         // to draw anything
 #if !ONLY_OPENGL_CONTEXT
-        
+
         inline void show() noexcept
 #else
         // This is changing the name for more 
@@ -267,7 +268,7 @@ namespace gfx
 #endif // !ONLY_OPENGL_CONTEXT
         {
 #if WINDOWS
-            SwapBuffers(GetDC(hwnd));
+            SwapBuffers(hdc);
 #elif LINUX
             glXSwapBuffers(display, window);
 #endif
@@ -300,7 +301,7 @@ namespace gfx
         // This function should be used at the end of 
         // the renderer loop in order to benchmark
         // and calculate the frame time correctly.
-        float get_frame_time() noexcept 
+        float get_frame_time() noexcept
         {
             delta_ticks = clock() - current_ticks;
 
@@ -509,7 +510,7 @@ namespace gfx
 
             // Changing the window attributes
             SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG>(this));
-            
+
             ShowWindow(hwnd, SW_SHOW);
             UpdateWindow(hwnd);
 #endif
@@ -521,22 +522,22 @@ namespace gfx
         {
             switch (msg)
             {
-            // ON DESTROY it's removing the OpenGL context first
-            // and then destroying the window
+                // ON DESTROY it's removing the OpenGL context first
+                // and then destroying the window
             case WM_DESTROY:
                 wglDeleteContext(wglGetCurrentContext());
                 DestroyWindow(hWnd);
                 break;
-            // ON CLOSE it's quiting the window
+                // ON CLOSE it's quiting the window
             case WM_CLOSE:
                 wglDeleteContext(wglGetCurrentContext());
                 PostQuitMessage(0);
                 break;
-            // ON STARTUP it's creating an OpenGL context
+                // ON STARTUP it's creating an OpenGL context
             case WM_CREATE:
                 create_opengl_context_windows(hWnd);
                 break;
-            // Calling the default window procedure
+                // Calling the default window procedure
             default:
                 return DefWindowProc(hWnd, msg, wParam, lParam);
                 break;
@@ -552,7 +553,7 @@ namespace gfx
             PIXELFORMATDESCRIPTOR pfd = {
                 sizeof(PIXELFORMATDESCRIPTOR), // Size
                 1,                             // Version
-                PFD_DRAW_TO_WINDOW     |       // Buffer can draw to window
+                PFD_DRAW_TO_WINDOW |       // Buffer can draw to window
                     PFD_SUPPORT_OPENGL |       // Buffer support OpenGL
                     PFD_DOUBLEBUFFER,          // Has 2 Buffers
                 PFD_TYPE_RGBA,                 // RGBA Pixel data
@@ -581,6 +582,8 @@ namespace gfx
             std::cout << "[WINDOWS] GL Vendor: " << glGetString(GL_VENDOR) << std::endl;
             std::cout << "[WINDOWS] GL Renderer: " << glGetString(GL_RENDERER) << std::endl;
             std::cout << "[WINDOWS] GL Version: " << glGetString(GL_VERSION) << std::endl;
+        
+            ReleaseDC(hWnd, window_handle_to_device_context);
         }
 #endif
 
@@ -591,6 +594,7 @@ namespace gfx
             // Clean up the window registers
             if (class_registered)
             {
+                ReleaseDC(hwnd, hdc);
                 UnregisterClassW(WINDOW_CLASS_NAME, instance);
                 class_registered = false;
             }
@@ -718,7 +722,7 @@ namespace gfx
 
             // Visual type for the screen
             vi = glXChooseVisual(display, 0, glxAttribs);
-            
+
             // Making sure it's okay!
             if (vi == nullptr)
                 throw std::runtime_error("[LINUX] No appropriate visual found!");
@@ -764,11 +768,12 @@ namespace gfx
         HWND hwnd;
         HINSTANCE instance;
         MSG msg;
+        HDC hdc;
         bool class_registered;
 #elif LINUX
         Display* display;
         Window   window;
-        Screen*  screen;
+        Screen* screen;
         int      screen_id;
 
         XVisualInfo* vi;
@@ -1009,7 +1014,7 @@ namespace gfx
             LShift = XK_Shift_L, RShift = XK_Shift_R
 #endif
         }; // Key
-        
+
         // ----------------------------------------------------------- //
 
         // This function return true if a key has indeed pressed
@@ -1061,7 +1066,7 @@ namespace gfx
             // All of the logical keys that the user
             // can press at once.
             char keys_return[32];
-            
+
             // Getting all of the keycodes
             XQueryKeymap(dpy, keys_return);
             KeyCode kc2 = XKeysymToKeycode(dpy, key);
@@ -1091,5 +1096,6 @@ namespace gfx
 // Fixed linux input lags
 // Fixed windows update to update automatically nonstop
 // Fixed support for MinGW
+// Fixed windows lags after few seconds
 // NEED TO FIX: X11 Destroyed window bug.
 // NEED TO ADD: Support for 64bit
