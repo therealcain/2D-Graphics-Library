@@ -8,14 +8,29 @@
 // ----------------------------------------------------- //
 // You can check the documentation in my blog.           //
 // ----------------------------------------------------- //
+// Linux:                                                // 
+// GCC: g++ main.cpp -lX11 -lGL                          //
+// Clang: g++ main.cpp -lX11 -lGL                        //
+// ------------                                          //
+// Windows:                                              //
+// MSVC: Just to build and run :)                        //
+// MinGW: g++ main.cpp -lopeng32 -lglu32 -lgdi32         //
+// ----------------------------------------------------- //
 
 #ifndef GFX_HPP
 #define GFX_HPP
 
-// ----------------------------------------------------- //
+// ----------------------------------------------------------- //
 
 #define WINDOWS _WIN32
-#define LINUX __linux__
+#define LINUX   __linux__
+#define MSVC    _MSC_VER
+#define MINGW   __MINGW32__
+
+#if MINGW || WINDOWS
+#define _UNICODE
+#define UNICODE
+#endif
 
 // ----------------------------------------------------------- //
 
@@ -25,7 +40,7 @@
 // OpenGL includes
 #include <gl/GL.h> 
 #include <gl/GLU.h> 
-#if _MSC_VER
+#if MSVC
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glu32.lib")
 #endif
@@ -70,7 +85,11 @@
 
 // ----------------------------------------------------------- //
 
-constexpr double PI = 3.14159265358979323;
+#ifdef M_PI
+constexpr double PI = M_PI;
+#else
+constexpr double PI = 3.14159265358979323
+#endif
 constexpr double PI2 = PI * 2;
 
 // ----------------------------------------------------------- //
@@ -260,8 +279,9 @@ namespace gfx
         void set_title(const std::string& title) noexcept
         {
 #if WINDOWS
-            // SetWindowText is expecting wide characters string
             std::wstring converted_title(title.begin(), title.end());
+
+            // SetWindowText is expecting wide characters string
             SetWindowText(hwnd, converted_title.c_str());
 #elif LINUX
             XStoreName(display, window, title.c_str());
@@ -1063,5 +1083,6 @@ namespace gfx
 // Fixed linux update to update automatically nonstop
 // Fixed linux input lags
 // Fixed windows update to update automatically nonstop
+// Fixed support for MinGW
 // NEED TO FIX: X11 Destroyed window bug.
 // NEED TO ADD: Support for 64bit
