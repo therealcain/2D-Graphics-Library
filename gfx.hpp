@@ -1,11 +1,23 @@
-// Copyright 2020, Eviatar Mor, All rights reserved.
-// https://therealcain.github.io/website/
+// ----------------------------------------------------- //
+// Copyright 2020, Eviatar Mor, All rights reserved.     //
+// https://therealcain.github.io/website/                //
+// ----------------------------------------------------- //
+// This is a very simple lightweight - straightforward   //
+// implementation of a graphics library, support C++11   //
+// and old hardware.                                     //
+// ----------------------------------------------------- //
+// You can check the documentation in my blog.           //
+// ----------------------------------------------------- //
 
 #ifndef GFX_HPP
 #define GFX_HPP
 
+// ----------------------------------------------------- //
+
 #define WINDOWS _WIN32
 #define LINUX __linux__
+
+// ----------------------------------------------------------- //
 
 #if WINDOWS
 #include <windows.h>
@@ -17,18 +29,26 @@
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glu32.lib")
 #endif
+
+// ----------------------------------------------------------- //
+
 #elif LINUX
+// namespace X 
+// {
 #include <unistd.h>
 #include <X11/X.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
 #include <X11/keysymdef.h>
+// }
 // OpenGL includes
 #include <GL/gl.h> 
 #include <GL/glu.h>
 #include <GL/glx.h>
 #endif
+
+// ----------------------------------------------------------- //
 
 // Standard libraries
 #include <iostream>
@@ -43,22 +63,24 @@
 #include <ostream>
 #include <ctime>
 
+// ----------------------------------------------------------- //
+
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+// ----------------------------------------------------------- //
+
 constexpr double PI = 3.14159265358979323;
 constexpr double PI2 = PI * 2;
+
+// ----------------------------------------------------------- //
 
 namespace gfx
 {
     // ----------------------------------------------------------- //
     // ----------------------------------------------------------- //
     // ----------------------------------------------------------- //
-    // ----------------------------------------------------------- //
-    // ----------------------------------------------------------- //
     // --------------------- UTILITY ----------------------------- //
-    // ----------------------------------------------------------- //
-    // ----------------------------------------------------------- //
     // ----------------------------------------------------------- //
     // ----------------------------------------------------------- //
     // ----------------------------------------------------------- //
@@ -73,6 +95,7 @@ namespace gfx
         Vector(T X, T Y)
             : x(X), y(Y) {}
 
+        // Just to ease on printing the vector
         inline friend std::ostream& operator<<(std::ostream& os, const Vector<T>& vec) {
             os << "X: " << vec.x << " Y:" << vec.y;
             return os;
@@ -83,7 +106,13 @@ namespace gfx
     using VectorI = Vector<int>;
     using VectorUI = Vector<uint32_t>;
 
-    // Colors
+    // ----------------------------------------------------------- //
+
+    // Color structure made of RGBA
+    // R - Red
+    // G - Green
+    // B - Blue
+    // A - Alpha
     struct Color
     {
         uint16_t R;
@@ -97,6 +126,7 @@ namespace gfx
         Color(uint16_t red, uint16_t green, uint16_t blue, uint16_t alpha)
             : R(red), G(green), B(blue), A(alpha) {}
 
+        // Just to ease on printing the color
         inline friend std::ostream& operator<<(std::ostream& os, const Color& color) {
             os << "R: " << color.R << " G:" << color.G << " B:" << color.B << " A:" << color.A;
             return os;
@@ -110,7 +140,10 @@ namespace gfx
     Color ColorBlue  = { 0  , 0  , 255, 1 };
     Color ColorWhite = { 255, 255, 255, 1 };
 
-    // This is going to hold the texture
+    // ----------------------------------------------------------- //
+
+    // This structure is holding the ID of the texture
+    // This could probably have more functions in the future
     struct Texture
     {
     protected:
@@ -119,12 +152,8 @@ namespace gfx
         friend class Renderer;
     };
 
-
-
-
-
     // ----------------------------------------------------------- //
-    // ----------------------------------------------------------- //
+
     // ----------------------------------------------------------- //
     // ----------------------------------------------------------- //
     // ----------------------------------------------------------- //
@@ -132,13 +161,10 @@ namespace gfx
     // ----------------------------------------------------------- //
     // ----------------------------------------------------------- //
     // ----------------------------------------------------------- //
-    // ----------------------------------------------------------- //
-    // ----------------------------------------------------------- //
     class Renderer
     {
     public:
-        // This constructor makes a window with a specific size
-        // that the user set
+       // Creates a Renderer with a given size
         explicit Renderer(const VectorUI& Size)
             : size(Size), running(true)
         {
@@ -149,6 +175,8 @@ namespace gfx
 #endif
         }
 
+        // ----------------------------------------------------------- //
+
         // This function handling the events and returns
         // if the window is still running in order
         // to let the while loop continue
@@ -157,17 +185,25 @@ namespace gfx
         bool is_running() noexcept
         {
 #if !ONLY_OPENGL_CONTEXT
+            // Clearing the buffers
             glClear(GL_COLOR_BUFFER_BIT);
 
+            // Changing the viewport to screen size
             glViewport(0, 0, size.x, size.y);
+
+            // Changing the scene to orthogonal projection
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
             glOrtho(0, size.x, size.y, 0, -1, 1);
 
+            // The matrix of all of the objects are going to be 
+            // treated as the model view
             glMatrixMode(GL_MODELVIEW);
             glLoadIdentity();
 #endif
 
+            // This is for calculating the frame time 
+            // from each update
             current_ticks = clock();
 
 #if WINDOWS
@@ -178,20 +214,29 @@ namespace gfx
             return false;
         }
 
+        // ----------------------------------------------------------- //
+
         // Clearing the screen with a specific color
-        void clear(const Color& color) {
+        inline void clear(const Color& color) {
+            // This function expect a value between 0 to 1
             glClearColor(color.R / 255.f, color.G / 255.f, color.B / 255.f, 1);
         }
         // Clearing the screen to default value which is black
-        void clear() {
+        inline void clear() {
             glClearColor(0, 0, 0, 1);
         }
+
+        // ----------------------------------------------------------- //
 
         // Swapping the render pipeline buffers
         // to draw anything
 #if !ONLY_OPENGL_CONTEXT
+        
         inline void show() noexcept
 #else
+        // This is changing the name for more 
+        // understandable name for people that wants
+        // to understand a little bit better
         inline void swap_buffers() noexcept
 #endif
         {
@@ -202,15 +247,20 @@ namespace gfx
 #endif
         }
 
+        // ----------------------------------------------------------- //
+
         // Force an exit from the window
-        inline void exit() noexcept {
+        inline void exit() {
             running = false;
         }
+
+        // ----------------------------------------------------------- //
 
         // Change the title of the window
         void set_title(const std::string& title) noexcept
         {
 #if WINDOWS
+            // SetWindowText is expecting wide characters string
             std::wstring converted_title(title.begin(), title.end());
             SetWindowText(hwnd, converted_title.c_str());
 #elif LINUX
@@ -218,7 +268,11 @@ namespace gfx
 #endif
         }
 
-        // Get frame time to make a better benchmarking
+        // ----------------------------------------------------------- //
+
+        // This function should be used at the end of 
+        // the renderer loop in order to benchmark
+        // and calculate the frame time correctly.
         float get_frame_time() noexcept 
         {
             delta_ticks = clock() - current_ticks;
@@ -227,6 +281,7 @@ namespace gfx
                 return CLOCKS_PER_SEC / delta_ticks;
         }
 
+        // ----------------------------------------------------------- //
 
 #if !ONLY_OPENGL_CONTEXT
         // ------------- DRAWING --------------------- //
@@ -310,10 +365,12 @@ namespace gfx
             int width;
             int height;
 
+            // Fetching all of the data from the image
             data = stbi_load(filename.c_str(), &width, &height, &nr_channels, 0);
 
             if (data)
             {
+                // Creating a texture based on this data
                 glGenTextures(1, &tex.id);
                 glBindTexture(GL_TEXTURE_2D, tex.id);
                 glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -323,6 +380,8 @@ namespace gfx
                 glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
                 glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
+                // Cleaning data because the data already passed 
+                // to opengl
                 stbi_image_free(data);
             }
             else
@@ -334,9 +393,12 @@ namespace gfx
         // Drawing a texture with position and size
         void draw_texture(Texture& texture, const VectorUI& position, const VectorUI& size)
         {
+            // Telling OpenGL that we are going to render
+            // 2D Texture
             glEnable(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, texture.id);
 
+            // Rendering all of the texture as a rectangle
             glBegin(GL_QUADS);
             glTexCoord2f(0, 0);
             glVertex2f(position.x, position.y);
@@ -348,10 +410,15 @@ namespace gfx
             glVertex2f(position.x, position.y + size.y);
             glEnd();
 
+            // All of the other shapes that coming after this 
+            // function are not going to be a texture
+            // So OpenGL would be able to draw them correctly.
             glDisable(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, 0);
         }
 #endif
+
+        // ----------------------------------------------------------- //
 
         // This is calling all of the clean ups
         ~Renderer()
@@ -367,21 +434,27 @@ namespace gfx
         // ----------------------------------------------------------- //
         // --------------------- WINDOWS ----------------------------- //
         // ----------------------------------------------------------- // 
-        // This function creates an windows window
+        // This function creates a win32 window
         void create_window_windows()
         {
 #if WINDOWS
+            // Creating the window size
             RECT rc;
             rc.top = 0;
             rc.left = 0;
             rc.right = size.x;
             rc.bottom = size.y;
 
+            // Making sure the window can be initialized 
+            // with the given size
             if (!AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, false))
                 throw std::runtime_error("[WINDOWS] Failed to create Windows window!");
 
+            // Making sure a class wasn't registered into
+            // the memory
             if (!class_registered)
             {
+                // Setting all of the settings of the window
                 WNDCLASS wc;
                 wc.cbClsExtra = 0;
                 wc.cbWndExtra = 0;
@@ -394,21 +467,23 @@ namespace gfx
                 wc.style = 0;
                 wc.lpfnWndProc = reinterpret_cast<WNDPROC>(WndProc);
 
+                // Register class into the memory
                 RegisterClass(&wc);
-
                 class_registered = true;
             }
 
+            // Creating a static window with the give size
             hwnd = CreateWindow(WINDOW_CLASS_NAME, L"", WS_OVERLAPPED | WS_MINIMIZEBOX | WS_SYSMENU | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT,
                 rc.right - rc.left, rc.bottom - rc.top, nullptr, nullptr, instance, nullptr);
 
+            // Make sure window has not failed
             if (hwnd == nullptr)
                 throw std::runtime_error("[WINDOWS] Failed to create Windows window!");
 
+            // Changing the window attributes
             SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG>(this));
-
+            
             ShowWindow(hwnd, SW_SHOW);
-
             UpdateWindow(hwnd);
 #endif
         }
@@ -419,17 +494,22 @@ namespace gfx
         {
             switch (msg)
             {
+            // ON DESTROY it's removing the OpenGL context first
+            // and then destroying the window
             case WM_DESTROY:
                 wglDeleteContext(wglGetCurrentContext());
                 DestroyWindow(hWnd);
                 break;
+            // ON CLOSE it's quiting the window
             case WM_CLOSE:
                 wglDeleteContext(wglGetCurrentContext());
                 PostQuitMessage(0);
                 break;
+            // ON STARTUP it's creating an OpenGL context
             case WM_CREATE:
                 create_opengl_context_windows(hWnd);
                 break;
+            // Calling the default window procedure
             default:
                 return DefWindowProc(hWnd, msg, wParam, lParam);
                 break;
@@ -443,29 +523,31 @@ namespace gfx
         static void create_opengl_context_windows(HWND hWnd) noexcept
         {
             PIXELFORMATDESCRIPTOR pfd = {
-                sizeof(PIXELFORMATDESCRIPTOR),
-                1,
-                PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,
-                PFD_TYPE_RGBA,
-                32,
-                0, 0, 0, 0, 0, 0,
-                0,
-                0,
-                0,
-                0, 0, 0, 0,
-                24,
-                8,
-                0,
-                PFD_MAIN_PLANE,
-                0,
-                0, 0, 0
+                sizeof(PIXELFORMATDESCRIPTOR), // Size
+                1,                             // Version
+                PFD_DRAW_TO_WINDOW     |       // Buffer can draw to window
+                    PFD_SUPPORT_OPENGL |       // Buffer support OpenGL
+                    PFD_DOUBLEBUFFER,          // Has 2 Buffers
+                PFD_TYPE_RGBA,                 // RGBA Pixel data
+                32,                            // Color bits of the framebuffer
+                0, 0, 0, 0, 0, 0, 0,           // Color bit planes
+                0, 0, 0, 0, 0, 0,              // Color bit planes
+                24,                            // bits for the Z buffer
+                8,                             // bits for the stencil buffer
+                0,                             // bits for the auxiliary buffes
+                PFD_MAIN_PLANE,                // This is probably deprecated
+                                               // Because early implementations 
+                                               // of OpenGL used it
+                0, 0, 0, 0                     // Color masks
             };
 
             HDC window_handle_to_device_context = GetDC(hWnd);
 
+            // setting pixel format for the window context
             int window_pixel_format = ChoosePixelFormat(window_handle_to_device_context, &pfd);
             SetPixelFormat(window_handle_to_device_context, window_pixel_format, &pfd);
 
+            // Creating the context
             HGLRC opengl_rendering_context = wglCreateContext(window_handle_to_device_context);
             wglMakeCurrent(window_handle_to_device_context, opengl_rendering_context);
 
@@ -479,6 +561,7 @@ namespace gfx
         void destroy_window_windows() noexcept
         {
 #if WINDOWS
+            // Clean up the window registers
             if (class_registered)
             {
                 UnregisterClassW(WINDOW_CLASS_NAME, instance);
@@ -487,20 +570,31 @@ namespace gfx
 #endif
         }
 #if WINDOWS
+        // This is going to be unused
+        // it's here just to tell windows that
+        // the window is going to be updated without
+        // any stop
         static void CALLBACK force_update_windows() {}
 #endif
         // Check all of the events for the window windows
         bool check_events_windows() noexcept
         {
 #if WINDOWS
-            
+            // Extracting the message from the message handler
+            // Right into this class memory so i can use it later
+            // from other places
             if (GetMessage(&msg, nullptr, 0, 0) > 0)
             {
-                SetTimer(hwnd, 0, 10, reinterpret_cast<TIMERPROC>(&force_update_windows));
+                // Call the unused update function every 1 miliseconds
+                SetTimer(hwnd, 0, 1, reinterpret_cast<TIMERPROC>(&force_update_windows));
 
+                // Translate virtual keys and send the message
+                // to the window procedure
                 TranslateMessage(&msg);
                 DispatchMessage(&msg);
 
+                // Should be true unless window was interrupted
+                // with the exit function
                 return running;
             }
 #endif
@@ -514,18 +608,27 @@ namespace gfx
         void create_window_linux()
         {
 #if LINUX
+            // Connecting to the X server and making sure
+            // everything was OK
             display = XOpenDisplay(nullptr);
             if (display == nullptr)
                 throw std::runtime_error("[LINUX] Could not open display!");
 
+            // getting the current screen
             screen = DefaultScreenOfDisplay(display);
             screen_id = DefaultScreen(display);
 
             create_opengl_context_linux();
 
+            // The only events i'm going to use
+            // are checking if a button has been pressed
+            // or if the mouse was moved
             XSelectInput(display, window, PointerMotionMask | ButtonPressMask);
 
+            // Clears the entire window and making sure 
+            // Nothing is being displayed
             XClearWindow(display, window);
+            // Raise the window on top of the stack.
             XMapRaised(display, window);
 #endif
         }
@@ -571,6 +674,8 @@ namespace gfx
 #if LINUX
             check_opengl_version_linux();
 
+            // This is basically similar to the attributes
+            // above of the windows version
             GLint glxAttribs[] = {
                 GLX_RGBA,
                 GLX_DOUBLEBUFFER,
@@ -584,13 +689,16 @@ namespace gfx
                 None
             };
 
+            // Visual type for the screen
             vi = glXChooseVisual(display, 0, glxAttribs);
-
+            
+            // Making sure it's okay!
             if (vi == nullptr)
                 throw std::runtime_error("[LINUX] No appropriate visual found!");
             else
                 std::cout << "[LINUX] Visual " << reinterpret_cast<void*>(vi->visualid) << " selected!" << std::endl;
 
+            // Setting all of the window attributes
             XSetWindowAttributes window_attribs;
             window_attribs.border_pixel = BlackPixel(display, screen_id);
             window_attribs.background_pixel = WhitePixel(display, screen_id);
@@ -598,23 +706,25 @@ namespace gfx
             window_attribs.colormap = XCreateColormap(display, RootWindow(display, screen_id), vi->visual, AllocNone);
             window_attribs.event_mask = ExposureMask;
 
+            // Finally, Creating the window with the opengl context
             window = XCreateWindow(display, RootWindow(display, screen_id), 0, 0, size.x, size.y, 0, vi->depth,
                 InputOutput, vi->visual, CWBackPixel | CWColormap | CWBorderPixel | CWEventMask, &window_attribs);
 
             context = glXCreateContext(display, vi, nullptr, true);
             glXMakeCurrent(display, window, context);
 
+            // Making sure the window cannot be scaled down or up
+            XSizeHints hints;
+            hints.min_width = size.x;
+            hints.min_height = size.y;
+            hints.max_width = size.x;
+            hints.max_height = size.y;
+            XSetWMNormalHints(display, window, &hints);
+
             std::cout << "[LINUX] GL Vendor: " << glGetString(GL_VENDOR) << std::endl;
             std::cout << "[LINUX] GL Renderer: " << glGetString(GL_RENDERER) << std::endl;
             std::cout << "[LINUX] GL Version: " << glGetString(GL_VERSION) << std::endl;
             std::cout << "[LINUX] GL Shading Language: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
-
-            XSizeHints hints;
-            hints.min_width  = size.x;
-            hints.min_height = size.y;
-            hints.max_width  = size.x;
-            hints.max_height = size.y;
-            XSetWMNormalHints(display, window, &hints);
 #endif
         }
 
@@ -630,12 +740,12 @@ namespace gfx
         bool class_registered;
 #elif LINUX
         Display* display;
-        Window        window;
-        Screen* screen;
-        int           screen_id;
+        Window   window;
+        Screen*  screen;
+        int      screen_id;
 
         XVisualInfo* vi;
-        GLXContext           context;
+        GLXContext   context;
 
         XEvent ev;
 #endif
@@ -648,19 +758,12 @@ namespace gfx
         friend class Mouse;
     }; // Renderer
 
-
-
-
-
-
     // ----------------------------------------------------------- //
-    // ----------------------------------------------------------- //
+
     // ----------------------------------------------------------- //
     // ----------------------------------------------------------- //
     // ----------------------------------------------------------- //
     // --------------------- Mouse ------------------------------- //
-    // ----------------------------------------------------------- //
-    // ----------------------------------------------------------- //
     // ----------------------------------------------------------- //
     // ----------------------------------------------------------- //
     // ----------------------------------------------------------- //
@@ -683,6 +786,8 @@ namespace gfx
             ScrollUp = 4, ScrollDown = 5
 #endif
         }; // Button
+
+        // ----------------------------------------------------------- //
 
         // This function is returning if the button has been pressed
         // on both windows and linux
@@ -765,8 +870,16 @@ namespace gfx
         static inline VectorI motion_linux(Renderer& renderer) noexcept
         {
 #if LINUX
+            // It's static because when the user is not 
+            // the mouse then the MotionNotify event
+            // is never called, thefore the vec would
+            // return 0.
+            // making it static forcing it return the 
+            // last value that moved.
             static VectorI vec;
 
+            // Clening all of the pending events
+            // and extract only the mouse position
             while (XPending(renderer.display))
             {
                 XNextEvent(renderer.display, &renderer.ev);
@@ -787,21 +900,12 @@ namespace gfx
 
     }; // Mouse
 
-
-
-
-
-
-
-
     // ----------------------------------------------------------- //
-    // ----------------------------------------------------------- //
+
     // ----------------------------------------------------------- //
     // ----------------------------------------------------------- //
     // ----------------------------------------------------------- //
     // --------------------- Keyboard ---------------------------- //
-    // ----------------------------------------------------------- //
-    // ----------------------------------------------------------- //
     // ----------------------------------------------------------- //
     // ----------------------------------------------------------- //
     // ----------------------------------------------------------- //
@@ -878,6 +982,8 @@ namespace gfx
             LShift = XK_Shift_L, RShift = XK_Shift_R
 #endif
         }; // Key
+        
+        // ----------------------------------------------------------- //
 
         // This function return true if a key has indeed pressed
         // and return false if nothing was pressed
@@ -919,12 +1025,27 @@ namespace gfx
         static bool key_pressed_linux(unsigned int key) noexcept
         {
 #if LINUX
+            // Creating a display that is never going to 
+            // be used other than fetching the keys
+            // because i don't want the user to
+            // be dependant on the renderer window.
             Display* dpy = XOpenDisplay(":0");
+
+            // All of the logical keys that the user
+            // can press at once.
             char keys_return[32];
+            
+            // Getting all of the keycodes
             XQueryKeymap(dpy, keys_return);
             KeyCode kc2 = XKeysymToKeycode(dpy, key);
+
+            // Yes it's nasty, it's just checking if the correct
+            // value was pressed, by checking it's bits correctly.
             bool is_pressed = !!(keys_return[kc2 >> 3] & (1 << (kc2 & 7)));
+
+            // Closing the display, because it's finished fetching the keys.
             XCloseDisplay(dpy);
+
             return is_pressed;
 #endif
             return false;
@@ -937,6 +1058,10 @@ namespace gfx
 
 #endif // GFX_HPP
 
+// ----------------------------------------------------- //
+
 // Fixed linux update to update automatically nonstop
 // Fixed linux input lags
 // Fixed windows update to update automatically nonstop
+// NEED TO FIX: X11 Destroyed window bug.
+// NEED TO ADD: Support for 64bit
