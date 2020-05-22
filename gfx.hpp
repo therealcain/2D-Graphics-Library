@@ -1124,4 +1124,3 @@ namespace gfx
 // Fixed windows lags after few seconds
 // Replaced clock() with std::chrono
 // NEED TO FIX: X11 Destroyed window bug.
-// NEED TO ADD: Support for 64bit
