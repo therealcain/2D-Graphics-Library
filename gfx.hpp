@@ -16,6 +16,13 @@
 // MSVC: Just to build and run :)                        //
 // MinGW: g++ main.cpp -lopeng32 -lglu32 -lgdi32         //
 // ----------------------------------------------------- //
+// If you don't planning on using the opengl             //
+// functionalities and only using the input and window   //
+// handlers, then you can define it before including     //
+// this file:                                            //
+// #define ONLY_OPENGL_CONTEXT                           //
+// #include "gfx.hpp"                                    //
+// ----------------------------------------------------- //
 
 #ifndef GFX_HPP
 #define GFX_HPP
