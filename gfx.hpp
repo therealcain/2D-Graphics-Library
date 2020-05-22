@@ -134,7 +134,7 @@ namespace gfx
     // there is no need for SFINAE here because Vector<T> is going
     // to check the type anyway.
     template<typename T, typename U>
-    inline Vector<T> cast_vector(const Vector<U>& src) {
+    inline Vector<T> vector_cast(const Vector<U>& src) {
         return Vector<T>(static_cast<T>(src.x), static_cast<T>(src.y));
     }
 
