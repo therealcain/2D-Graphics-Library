@@ -34,7 +34,7 @@
 #define MSVC    _MSC_VER
 #define MINGW   __MINGW32__
 
-#if MINGW || WINDOWS
+#if MINGW
 #define _UNICODE
 #define UNICODE
 #endif
@@ -76,14 +76,10 @@
 #include <iostream>
 #include <type_traits>
 #include <stdexcept>
-#include <exception>
 #include <cmath>
-#include <cstdlib>
-#include <cstdio>
 #include <cstdint>
-#include <cstring>
 #include <ostream>
-#include <ctime>
+#include <chrono>
 
 // ----------------------------------------------------------- //
 
@@ -231,7 +227,7 @@ namespace gfx
 
             // This is for calculating the frame time 
             // from each update
-            current_ticks = clock();
+            start_ticks = std::chrono::high_resolution_clock::now();
 
 #if WINDOWS
             return check_events_windows();
@@ -303,10 +299,16 @@ namespace gfx
         // and calculate the frame time correctly.
         float get_frame_time() noexcept
         {
-            delta_ticks = clock() - current_ticks;
+            using namespace std::chrono;
 
-            if (delta_ticks > 0)
-                return CLOCKS_PER_SEC / delta_ticks;
+            high_resolution_clock::time_point current_ticks = high_resolution_clock::now();
+            
+            auto delta_ticks = duration_cast<duration<double>>(current_ticks - start_ticks);
+
+            if ( delta_ticks.count() > 0)
+                return CLOCKS_PER_SEC / delta_ticks.count();
+
+            return 0.0;
         }
 
         // ----------------------------------------------------------- //
@@ -773,7 +775,7 @@ namespace gfx
 #elif LINUX
         Display* display;
         Window   window;
-        Screen* screen;
+        Screen*  screen;
         int      screen_id;
 
         XVisualInfo* vi;
@@ -784,8 +786,8 @@ namespace gfx
         bool running;
         VectorUI size;
 
-        clock_t current_ticks;
-        clock_t delta_ticks;
+        // For calculating Framerate
+        std::chrono::high_resolution_clock::time_point start_ticks;
 
         friend class Mouse;
     }; // Renderer
@@ -1097,5 +1099,6 @@ namespace gfx
 // Fixed windows update to update automatically nonstop
 // Fixed support for MinGW
 // Fixed windows lags after few seconds
+// Replaced clock() with std::chrono
 // NEED TO FIX: X11 Destroyed window bug.
 // NEED TO ADD: Support for 64bit
