@@ -1,0 +1,30 @@
+# Add support for multithreading
+
+# Add image manipulation:
+    Color Sprite::get_pixel(const Renderer& renderer, const VectorUI& pos) noexcept
+    {
+        Color color;
+        glReadPixels(pos.x, renderer.size.y - pos.y - 1, 1, 1, GL_RGBA, GL_FLOAT, &color);
+        return color;
+    }
+
+    void Sprite::set_pixel(const Renderer& renderer, const VectorUI& pos, Color& color) noexcept
+    {
+        glBindTexture(GL_TEXTURE_2D, id);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, pos.x, pos.y, 1, 1, GL_RGBA, GL_FLOAT, &color);
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
+# Add .ttf support
+
+# Add more extensive window manipulation:
+ * Resizing window
+ * Fullscreen window
+ * When window has been resized: changing the viewport? leave it as is? or scaling the window?
+ * Multisampling or in other words Anti Aliasing
+
+* MAYBE: Add Support for Entity Component System to help game developers.
+
+* MAYBE: Add support for MAC.
+
+* IN THE FUTURE: Adding 2D Physics engine, that simulate 2D real-time physics.
