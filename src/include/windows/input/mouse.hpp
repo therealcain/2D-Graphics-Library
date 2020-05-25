@@ -9,7 +9,7 @@
 #define MOUSE_HPP
 
 #include "../renderer.hpp"
-#include "../../util/util.hpp"
+#include "../../utils/utils.hpp"
 
 #include <windows.h>
 

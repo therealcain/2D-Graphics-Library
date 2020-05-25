@@ -1,10 +1,10 @@
-#include "../../includes/draws/shape.hpp"
+#include "../../include/draws/shape.hpp"
 
 START_NAMESPACE
 
-void Shape::add_vertex(const std::initializer_list<Vertex>& vertexes)
+void Shape::add_vertex(const std::initializer_list<Vertex>& vertices)
 {
-    for(const auto& vertex : vertexes)
+    for(const auto& vertex : vertices)
         m_vertex.push_back(vertex); 
 }
 
@@ -12,9 +12,23 @@ void Shape::add_vertex(const Vertex& vertex) {
     m_vertex.push_back(vertex);
 }
 
+void Shape::add_vertex() {
+    m_vertex.push_back(gfx::Vertex());
+}
+
 // ------------------------------------------------------------ //
 
-const std::vector<Vertex>& Shape::get_vertexes() const {
+void Shape::update_vertex(const Vertex& vertex, size_t position)
+{
+    if(position >= m_vertex.size())
+        throw std::logic_error("Vertex position is incorrect!");
+
+    m_vertex[position] = vertex;
+}
+
+// ------------------------------------------------------------ //
+
+const std::vector<Vertex>& Shape::get_vertices() const {
     return m_vertex;
 }
 

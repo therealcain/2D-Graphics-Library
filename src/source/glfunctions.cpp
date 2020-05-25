@@ -1,4 +1,4 @@
-#include "../includes/glfunctions.hpp"
+#include "../include/glfunctions.hpp"
 
 #ifdef _WIN32
 #include <gl/GL.h> 

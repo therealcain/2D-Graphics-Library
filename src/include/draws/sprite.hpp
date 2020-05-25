@@ -6,9 +6,9 @@
 #ifndef SPRITE_HPP
 #define SPRITE_HPP
 
-#include "../util/util.hpp"
-#include "../util/vector.hpp"
-#include "../util/color.hpp"
+#include "../utils/utils.hpp"
+#include "../utils/vector.hpp"
+#include "../utils/color.hpp"
 
 #include "transformation.hpp"
 

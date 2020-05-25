@@ -7,8 +7,8 @@
 // information of the namespaces.                        //
 ///////////////////////////////////////////////////////////
 
-#ifndef UTIL_HPP
-#define UTIL_HPP
+#ifndef UTILS_HPP
+#define UTILS_HPP
 
 #include <cmath>
 #include <iostream>
@@ -32,16 +32,7 @@ constexpr float PI = 3.14159265358979323846;
 constexpr float PI2 = PI * 2;
 
 // Abort if pointer is null
-// This is inline because i didn't want to create
-// implementation file for single function
-inline void abort_null(void* ptr, const std::string& str)
-{
-    if(ptr == nullptr)
-    {
-        std::cout << str << std::endl;
-        abort();
-    }
-}
+extern void abort_null(void* ptr, const std::string& str);
 
 // Map color to opengl color format
 constexpr float rgba_to_gl(unsigned int color) {
@@ -50,4 +41,4 @@ constexpr float rgba_to_gl(unsigned int color) {
 
 END_NAMESPACE
 
-#endif // UTIL_HPP
+#endif // UTILS_HPP

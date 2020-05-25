@@ -9,7 +9,7 @@
 #ifndef GEOMETRY_HPP
 #define GEOMETRY_HPP
 
-#include "util.hpp"
+#include "utils.hpp"
 #include "vector.hpp"
 
 #include <iostream>

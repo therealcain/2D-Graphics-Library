@@ -9,7 +9,7 @@
 #ifndef VERTEX_HPP
 #define VERTEX_HPP
 
-#include "util.hpp"
+#include "utils.hpp"
 #include "color.hpp"
 #include "vector.hpp"
 

@@ -10,7 +10,7 @@
 #ifndef VECTOR_HPP
 #define VECTOR_HPP
 
-#include "util.hpp"
+#include "utils.hpp"
 
 #include <type_traits>
 #include <iostream>

@@ -1,4 +1,4 @@
-#include "../../includes/windows/renderer.hpp"
+#include "../../include/windows/renderer.hpp"
 
 #include <gl/GL.h> 
 #include <gl/GLU.h> 

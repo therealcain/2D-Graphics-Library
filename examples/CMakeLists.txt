@@ -1,22 +1,18 @@
 cmake_minimum_required(VERSION 3.7)
 
-project (GFX)
-
-set(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/)
+set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_BUILD_TYPE Release)
 
 if (UNIX)
 
-    include_directories(
-        ../src/external_libs
-        ../src/include/
-        ../src/include/linux
-        ../src/include/linux/input
-        ../src/include/draws
-        ../src/include/utils
-    )
+    # set(CMAKE_CXX_CLANG_TIDY "clang-tidy;-checks=* -extra-arg=-std=${CMAKE_CXX_STANDARD}")
+    add_compile_options(-Wall -Wextra -Wpedantic -O3)
 
-    add_library(${CMAKE_PROJECT_NAME} STATIC
+    find_package(OpenGL REQUIRED)
+    find_package(X11 REQUIRED)
+    include_directories(${OPENGL_INCLUDE_DIRS} ${X11_INCLUDE_DIRS})
+
+    set(GFX_FILES
         ../src/source/glfunctions.cpp
         ../src/source/linux/renderer.cpp
         ../src/source/linux/input/keyboard.cpp
@@ -29,5 +25,8 @@ if (UNIX)
         ../src/source/utils/color.cpp
         ../src/source/utils/utils.cpp
     )
+
+    add_executable(straight_line straight_line.cpp ${GFX_FILES})
+    target_link_libraries(straight_line ${OPENGL_LIBRARIES} ${X11_LIBRARIES})
 
 endif()

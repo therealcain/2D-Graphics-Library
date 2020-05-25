@@ -1,4 +1,4 @@
-#include "../../../includes/linux/input/keyboard.hpp"
+#include "../../../include/linux/input/keyboard.hpp"
 
 #include <X11/X.h>
 #include <X11/Xlib.h>

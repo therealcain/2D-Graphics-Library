@@ -1,4 +1,4 @@
-#include "../../../includes/linux/input/mouse.hpp"
+#include "../../../include/linux/input/mouse.hpp"
 
 #include <X11/X.h>
 

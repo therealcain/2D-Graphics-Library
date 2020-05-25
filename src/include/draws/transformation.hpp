@@ -10,9 +10,9 @@
 #ifndef TRANSFORMATION_HPP
 #define TRANSFORMATION_HPP
 
-#include "../util/util.hpp"
-#include "../util/vector.hpp"
-#include "../util/geometry.hpp"
+#include "../utils/utils.hpp"
+#include "../utils/vector.hpp"
+#include "../utils/geometry.hpp"
 
 START_NAMESPACE
 

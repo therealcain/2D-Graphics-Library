@@ -10,10 +10,10 @@
 #ifndef SHAPE_HPP
 #define SHAPE_HPP
 
-#include "../util/util.hpp"
-#include "../util/vector.hpp"
-#include "../util/color.hpp"
-#include "../util/vertex.hpp"
+#include "../utils/utils.hpp"
+#include "../utils/vector.hpp"
+#include "../utils/color.hpp"
+#include "../utils/vertex.hpp"
 
 #include "transformation.hpp"
 
@@ -26,14 +26,20 @@ START_NAMESPACE
 class Shape : public Transformation
 {
 public:
-    // Add vertexes
-    void add_vertex(const std::initializer_list<Vertex>& vertexes);
+    // Add Vertices
+    void add_vertex(const std::initializer_list<Vertex>& vertices);
     void add_vertex(const Vertex& vertex);
+    void add_vertex();
+
+    // ------------------------------------------------------------ //
+
+    // Update Vertices
+    void update_vertex(const Vertex& vertex, size_t position);
 
     // ------------------------------------------------------------ //
 
     // Get vertexes
-    const std::vector<Vertex>& get_vertexes() const;
+    const std::vector<Vertex>& get_vertices() const;
 
     // ------------------------------------------------------------ //
 

@@ -8,10 +8,10 @@
 #ifndef RECTANGLE_HPP
 #define RECTANGLE_HPP
 
-#include "../util/util.hpp"
-#include "../util/vector.hpp"
-#include "../util/geometry.hpp"
-#include "../util/color.hpp"
+#include "../utils/utils.hpp"
+#include "../utils/vector.hpp"
+#include "../utils/geometry.hpp"
+#include "../utils/color.hpp"
 
 #include "transformation.hpp"
 

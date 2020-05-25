@@ -34,10 +34,10 @@
 
 #include "glfunctions.hpp"
 
-#include "util/vector.hpp"
-#include "util/geometry.hpp"
-#include "util/color.hpp"
-#include "util/vertex.hpp"
+#include "utils/vector.hpp"
+#include "utils/geometry.hpp"
+#include "utils/color.hpp"
+#include "utils/vertex.hpp"
 
 #include "draws/rectangle.hpp"
 #include "draws/circle.hpp"

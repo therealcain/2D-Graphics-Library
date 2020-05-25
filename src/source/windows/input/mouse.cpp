@@ -1,4 +1,4 @@
-#include "../../../includes/windows/input/mouse.hpp"
+#include "../../../include/windows/input/mouse.hpp"
 
 START_NAMESPACE
 

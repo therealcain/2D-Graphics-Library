@@ -11,8 +11,8 @@
 #ifndef GLFUNCTIONS_HPP
 #define GLFUNCTIONS_HPP
 
-#include "util/util.hpp"
-#include "util/color.hpp"
+#include "utils/utils.hpp"
+#include "utils/color.hpp"
 #include "draws/rectangle.hpp"
 #include "draws/circle.hpp"
 #include "draws/shape.hpp"

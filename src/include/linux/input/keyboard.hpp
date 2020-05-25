@@ -9,7 +9,7 @@
 #ifndef KEYBOARD_HPP
 #define KEYBOARD_HPP
 
-#include "../../util/util.hpp"
+#include "../../utils/utils.hpp"
 
 #include <X11/keysym.h>
 

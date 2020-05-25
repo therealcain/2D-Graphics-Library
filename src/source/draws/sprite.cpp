@@ -1,10 +1,10 @@
-#include "../../includes/draws/sprite.hpp"
+#include "../../include/draws/sprite.hpp"
 
 #ifdef _WIN32
-#include "../../includes/windows/renderer.hpp"
+#include "../../include/windows/renderer.hpp"
 #include <gl/gl.h>
 #elif __linux__
-#include "../../includes/linux/renderer.hpp"
+#include "../../include/linux/renderer.hpp"
 #include <GL/gl.h>
 #endif
 

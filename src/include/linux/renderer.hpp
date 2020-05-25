@@ -15,8 +15,8 @@
 #ifndef RENDERER_HPP
 #define RENDERER_HPP
 
-#include "../util/util.hpp"
-#include "../util/geometry.hpp"
+#include "../utils/utils.hpp"
+#include "../utils/geometry.hpp"
 
 #include <X11/X.h>
 #include <X11/Xlib.h>
