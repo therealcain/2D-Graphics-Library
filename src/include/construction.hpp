@@ -12,9 +12,16 @@
 
 #include "utils/utils.hpp"
 
+#ifdef _WIN32
+#include "windows/renderer.hpp"
+#elif __linux__
+#include "linux/renderer.hpp"
+#endif
+
 #include <thread>
 #include <vector>
 #include <memory>
+#include <type_traits>
 
 START_NAMESPACE
 
@@ -24,7 +31,8 @@ std::vector<std::thread> threads;
 template<typename T>
 void _GFX_construct_window() {}
 
-template<typename T, typename U, typename... Args>
+template<typename T, typename U, typename... Args, 
+    typename = typename std::enable_if<std::is_base_of<Renderer, U>::value>::type>
 void _GFX_construct_window() 
 {
     // Creates a thread for the window
