@@ -33,6 +33,7 @@
 // ------------------------------------------------------------ //
 
 #include "glfunctions.hpp"
+#include "construction.hpp"
 
 #include "utils/vector.hpp"
 #include "utils/geometry.hpp"
@@ -44,21 +45,5 @@
 #include "draws/shape.hpp"
 #include "draws/sprite.hpp"
 
-// ------------------------------------------------------------ //
-
-// Creates for the user a window
-#define GFX_MAKE_WINDOW(CLASS) \
-CLASS GFX_window;              \
-while(GFX_window.is_running()) \
-{                              \
-     GFX_window.on_update();   \
-}
-
-// Creates for the user an int main with the window
-#define GFX_MAKE_MAIN(CLASS)   \
-int main()                     \
-{                              \
-     GFX_MAKE_WINDOW(CLASS);   \
-}
 
 #endif // GFX_HPP

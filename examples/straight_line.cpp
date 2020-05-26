@@ -47,7 +47,7 @@ public:
           gfx::GLFunctions(get_renderer())
     {
         /* ON START */
-        lines.add_vertex(gfx::Vertex(gfx::VectorI(WIDTH / 2, HEIGHT / 2), gfx::Color(220, 41, 150)));
+        lines.add_vertex(gfx::Vertex(gfx::VectorI(WIDTH / 2, HEIGHT / 2), gfx::Color(255,255,164)));
         lines.add_vertex();
         lines.set_connection(false);
     }
@@ -67,7 +67,7 @@ public:
         gfx::VectorI next_pos(x_new, y_new);
         next_pos += pos;
 
-        lines.update_vertex(gfx::Vertex(next_pos, gfx::Color(20, 55, 160)), 1);
+        lines.update_vertex(gfx::Vertex(next_pos, gfx::Color(154,210,001)), 1);
 
         draw(lines);
 
@@ -78,4 +78,6 @@ public:
     }
 };
 
-GFX_MAKE_MAIN(Win)
+int main() {   
+    gfx::construct_windows<Win>();
+}

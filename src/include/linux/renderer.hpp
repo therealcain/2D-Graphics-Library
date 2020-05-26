@@ -27,6 +27,7 @@
 #include <GL/glx.h>
 
 #include <chrono>
+#include <atomic>
 
 START_NAMESPACE
 
@@ -72,6 +73,9 @@ public:
 
     // Returning the framerate in ms
     double get_framerate() const;
+
+    // Returns if the current thread is working
+    bool is_focused() const;
 
 // ------------------------------------------------------------ //
 
@@ -124,16 +128,20 @@ private:
     std::string m_title;
 
 private: // This is never being accessed no matter what
-    // This is the mouse position that fetched from the
+    // This is the mouse handlers that fetched from the
     // window events handler
     VectorI mouse_pos; 
     unsigned int button_pressed;
 
+    // Lock on the focues window
+    std::atomic<bool> focused;
+    
     // This is the frame rate ticks
     // It's cannot be touched from the user
     std::chrono::high_resolution_clock::time_point start_ticks;
 
     friend class Mouse;
+    friend class Keyboard;
     friend class GLFunctions;
 }; // Renderer
 

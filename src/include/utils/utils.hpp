@@ -16,8 +16,9 @@
 #define START_NAMESPACE namespace gfx {
 #define END_NAMESPACE }
 
-#ifdef __GNUC__
-#define GFX_UNUSED gnu::unused
+// C++11 does not support [[maybe_unused]]
+#if defined(_GNUC__) || defined(__clang__) || defined(__MINGW32__)
+#define GFX_UNUSED __attribute__((gnu::unused))
 #else
 #define GFX_UNUSED
 #endif

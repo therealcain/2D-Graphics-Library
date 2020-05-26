@@ -7,8 +7,7 @@
 
 START_NAMESPACE
 
-bool Keyboard::key_pressed(Key key)
-{
+bool Keyboard::key_pressed(Key key) {
     return key_pressed(static_cast<unsigned int>(key));
 }
 

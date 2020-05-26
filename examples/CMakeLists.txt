@@ -10,6 +10,7 @@ if (UNIX)
 
     find_package(OpenGL REQUIRED)
     find_package(X11 REQUIRED)
+    find_package (Threads)
     include_directories(${OPENGL_INCLUDE_DIRS} ${X11_INCLUDE_DIRS})
 
     set(GFX_FILES
@@ -27,6 +28,9 @@ if (UNIX)
     )
 
     add_executable(straight_line straight_line.cpp ${GFX_FILES})
-    target_link_libraries(straight_line ${OPENGL_LIBRARIES} ${X11_LIBRARIES})
+    target_link_libraries(straight_line ${OPENGL_LIBRARIES} ${X11_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+
+    add_executable(multiple_windows multiple_windows.cpp ${GFX_FILES})
+    target_link_libraries(multiple_windows ${OPENGL_LIBRARIES} ${X11_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 
 endif()

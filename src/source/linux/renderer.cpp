@@ -85,15 +85,13 @@ bool Renderer::is_running() noexcept
 
 // ------------------------------------------------------------ //
 
-void Renderer::close() noexcept
-{
+void Renderer::close() noexcept {
     running = false;
 }
 
 // ------------------------------------------------------------ //
 
-void Renderer::swap_buffers() noexcept
-{
+void Renderer::swap_buffers() noexcept {
     glXSwapBuffers(display, window);
 }
 
@@ -111,6 +109,10 @@ double Renderer::get_framerate() const
         return CLOCKS_PER_SEC / delta_ticks.count();
 
     return 0.0;
+}
+
+bool Renderer::is_focused() const {
+    return focused;
 }
 
 // ------------------------------------------------------------ //
@@ -210,7 +212,7 @@ void Renderer::init_events() noexcept
     // The only events i'm going to use
     // are checking if a button has been pressed
     // or if the mouse was moved
-    XSelectInput(display, window, PointerMotionMask | ButtonPressMask);
+    XSelectInput(display, window, PointerMotionMask | ButtonPressMask | KeyPressMask | FocusChangeMask);
 
     // Clears the entire Renderer and making sure 
     // Nothing is being displayed
@@ -231,21 +233,34 @@ void Renderer::handle_events() noexcept
         XCheckWindowEvent(display, window, 1, &ev);
         XNextEvent(display, &ev);
 
-        // Exit the window
-        if(ev.type == ClientMessage)
+        // When user in the window
+        if(ev.type == FocusIn) 
+            focused = true;
+        else if(ev.type == FocusOut)
+            focused = false;
+
+        // The other events will only work if
+        // the window is focused
+        if(focused == true)
         {
-            running = false;
-            return;
+            // Exit the window
+            if(ev.type == ClientMessage)
+            {
+                running = false;
+                return;
+            }
+
+            // Mouse is moving
+            else if (ev.type == MotionNotify)
+            {
+                mouse_pos.x = ev.xmotion.x;
+                mouse_pos.y = ev.xmotion.y;
+            }
+
+            // Mouse button
+            else if(ev.type == ButtonPress)
+                button_pressed = ev.xbutton.button;
         }
-        // Mouse is moving
-        else if (ev.type == MotionNotify)
-        {
-            mouse_pos.x = ev.xmotion.x;
-            mouse_pos.y = ev.xmotion.y;
-        }
-        // Mouse button
-        else if(ev.type == ButtonPress)
-            button_pressed = ev.xbutton.button;
 
         XFlush(display);
     }

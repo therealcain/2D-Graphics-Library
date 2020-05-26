@@ -1,4 +1,4 @@
-# Add support for multithreading
+# Add support for windows multithreading
 
 # Add image manipulation:
     Color Sprite::get_pixel(const Renderer& renderer, const VectorUI& pos) noexcept

@@ -15,6 +15,9 @@
 
 START_NAMESPACE
 
+// Forward declaration for the renderer
+class Renderer;
+
 class Keyboard
 {
 public:
