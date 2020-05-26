@@ -3,6 +3,8 @@
 #include <gl/GL.h> 
 #include <gl/GLU.h> 
 
+#include <string>
+
 #define WINDOW_CLASS_NAME L"Window"
 
 START_NAMESPACE
@@ -33,13 +35,11 @@ Renderer::Renderer(unsigned int width, unsigned int height)
     create();
 }
 
-// Destructor
 Renderer::~Renderer()
 {
     // Clean up the window registers
     if (class_registered)
     {
-        ReleaseDC(hwnd, hdc);
         UnregisterClassW(WINDOW_CLASS_NAME, instance);
         class_registered = false;
     }
@@ -59,20 +59,18 @@ void Renderer::set_title(const std::string& title)
     std::wstring converted_title(title.begin(), title.end());
 
     // SetWindowText is expecting wide characters string
-    SetWindowText(hwnd, converted_title.c_str());
+    SetWindowText(m_hwnd, converted_title.c_str());
 
     m_title = title;
 }
 
-const std::string& Renderer::get_title() const noexcept
-{
+const std::string& Renderer::get_title() const noexcept {
     return m_title;
 }
 
 // ------------------------------------------------------------ //
 
-const Geometry& Renderer::get_geometry() const noexcept
-{
+const Geometry& Renderer::get_geometry() const noexcept {
     return m_geometry;
 }
 
@@ -86,8 +84,7 @@ bool Renderer::is_running() noexcept
 
 // ------------------------------------------------------------ //
 
-void Renderer::close() noexcept
-{
+void Renderer::close() noexcept {
     running = false;
 }
 
@@ -95,7 +92,9 @@ void Renderer::close() noexcept
 
 void Renderer::swap_buffers() noexcept
 {
+    HDC hdc = GetDC(m_hwnd);
     SwapBuffers(hdc);
+    ReleaseDC(m_hwnd, hdc);
 }
 
 // ------------------------------------------------------------ //
@@ -116,12 +115,15 @@ double Renderer::get_framerate() const
 
 // ------------------------------------------------------------ //
 
+bool Renderer::is_focused() const {
+    return focused;
+}
+
+// ------------------------------------------------------------ //
+
 void Renderer::create() noexcept
 {
     init_members();
-    hdc = GetDC(hwnd);
-
-    glEnable(GL_MULTISAMPLE);
     
     running = true;
 }
@@ -152,8 +154,8 @@ void Renderer::init_members()
         class_registered = true;
     }
 
-    // Creating a static window with the give size
-    hwnd = CreateWindow(
+    // Creating a static window with the given size
+    m_hwnd = CreateWindow(
         WINDOW_CLASS_NAME, 
         L"", 
         WS_OVERLAPPED | WS_MINIMIZEBOX | WS_SYSMENU | WS_VISIBLE, 
@@ -166,35 +168,38 @@ void Renderer::init_members()
         nullptr);
 
     // Make sure window has not failed
-    abort_null(hwnd, "Window couldn't to create!");
+    abort_null(m_hwnd, "Window couldn't to create!");
 
     // Changing the window attributes
-    SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG>(this));
+    SetWindowLongPtr(m_hwnd, GWLP_USERDATA, reinterpret_cast<LONG>(this));
 
-    ShowWindow(hwnd, SW_SHOW);
-    UpdateWindow(hwnd);
+    ShowWindow(m_hwnd, SW_SHOW);
+    UpdateWindow(m_hwnd);
 }
 
 LRESULT CALLBACK Renderer::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {
-        // ON DESTROY it's removing the OpenGL context first
-        // and then destroying the window
+    // ON DESTROY it's removing the OpenGL context first
+    // and then destroying the window
     case WM_DESTROY:
         wglDeleteContext(wglGetCurrentContext());
         DestroyWindow(hWnd);
         break;
-        // ON CLOSE it's quiting the window
+    // ON CLOSE it's quiting the window
     case WM_CLOSE:
         wglDeleteContext(wglGetCurrentContext());
         PostQuitMessage(0);
         break;
-        // ON STARTUP it's creating an OpenGL context
+    // ON STARTUP it's creating an OpenGL context
     case WM_CREATE:
         create_opengl_context(hWnd);
         break;
-        // Calling the default window procedure
+    case WM_NOTIFY:
+        std::cout << "notify" << std::endl;
+        break;
+    // Calling the default window procedure
     default:
         return DefWindowProc(hWnd, msg, wParam, lParam);
         break;
@@ -235,18 +240,19 @@ void Renderer::create_opengl_context(HWND hWnd) noexcept
     // Creating the context
     HGLRC opengl_rendering_context = wglCreateContext(window_handle_to_device_context);
     wglMakeCurrent(window_handle_to_device_context, opengl_rendering_context);
+    ReleaseDC(hWnd, window_handle_to_device_context);
+
+    // This is for threading, to set on focus the last window
+    SetFocus(hWnd);
 
     std::cout << "[WINDOWS] GL Vendor: " << glGetString(GL_VENDOR) << std::endl;
     std::cout << "[WINDOWS] GL Renderer: " << glGetString(GL_RENDERER) << std::endl;
     std::cout << "[WINDOWS] GL Version: " << glGetString(GL_VERSION) << std::endl;
-
-    ReleaseDC(hWnd, window_handle_to_device_context);
 }
 
 // ------------------------------------------------------------ //
 
-void CALLBACK Renderer::force_update() 
-{
+void CALLBACK Renderer::force_update() {
     // Unsued
 }
 
@@ -257,17 +263,30 @@ bool Renderer::handle_events() noexcept
     // from other places
     if (GetMessage(&msg, nullptr, 0, 0) > 0)
     {
-        // Call the unused update function every 1 miliseconds
-        SetTimer(hwnd, 0, 1, reinterpret_cast<TIMERPROC>(&force_update));
+        HWND hwnd = GetFocus();
 
-        // Translate virtual keys and send the message
-        // to the window procedure
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
+        if(hwnd != nullptr)
+        {
+            // Call the unused update function every 1 miliseconds
+            SetTimer(m_hwnd, 0, 1, reinterpret_cast<TIMERPROC>(&force_update));
+
+            
+
+            // Translate virtual keys and send the message
+            // to the window procedure
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+
+            // The window is focused
+            focused = true;
+        }
+        else
+            focused = false;
 
         // Should be true unless window was interrupted
         // with the exit function
         return running;
+
     }
 
     return false;

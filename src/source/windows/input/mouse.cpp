@@ -24,11 +24,26 @@ bool Mouse::button_pressed(Renderer& renderer, Button button)
 
 VectorI Mouse::motion(Renderer& renderer)
 {
+    static POINT last_p;
     POINT p;
     if (GetCursorPos(&p))
     {
-        if (ScreenToClient(renderer.hwnd, &p))
-            return { p.x, p.y };
+        RECT rect;
+        GetWindowRect(renderer.m_hwnd, &rect);
+
+        if(p.x       <= rect.right  &&
+           rect.left <= p.x         &&
+           p.y       <= rect.bottom &&
+           rect.top  <= p.y)
+            {
+                if (ScreenToClient(renderer.m_hwnd, &p))
+                {
+                    last_p = p;
+                    return { p.x, p.y };
+                }
+            }
+            else
+                return { last_p.x, last_p.y };
     }
 
     return { 0, 0 };

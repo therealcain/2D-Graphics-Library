@@ -31,6 +31,7 @@ std::vector<std::thread> threads;
 template<typename T>
 void _GFX_construct_window() {}
 
+// Only base of Renderer can be call this
 template<typename T, typename U, typename... Args, 
     typename = typename std::enable_if<std::is_base_of<Renderer, U>::value>::type>
 void _GFX_construct_window() 

@@ -21,6 +21,8 @@
 #include <windows.h>
 #include <chrono>
 
+#include <atomic>
+
 START_NAMESPACE
 
 class Renderer
@@ -67,6 +69,9 @@ public:
     // Returning the framerate in ms
     double get_framerate() const;
 
+    // Returning if the current window is active
+    bool is_focused() const;
+
 // ------------------------------------------------------------ //
 
 private:
@@ -99,11 +104,8 @@ public:
 private:
 #endif
     // Window
-    HWND hwnd;
+    HWND m_hwnd;
     HINSTANCE instance;
-
-    // Device Context
-    HDC hdc;
 
     // Events
     MSG msg;
@@ -124,6 +126,8 @@ private: // This is never being accessed no matter what
     // This is the frame rate ticks
     // It's cannot be touched from the user
     std::chrono::high_resolution_clock::time_point start_ticks;
+
+    std::atomic<bool> focused;
 
     friend class Mouse;
     friend class GLFunctions;
