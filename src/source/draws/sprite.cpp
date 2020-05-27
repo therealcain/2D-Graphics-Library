@@ -162,7 +162,7 @@ Color Sprite::get_pixel(const Renderer& renderer, unsigned int x, unsigned int y
         GL_FLOAT,
         &colors);
     
-    return {gl_to_rgba(colors[0]), gl_to_rgba(colors[1]), gl_to_rgba(colors[2]), gl_to_rgba(colors[3])};
+    return {colors[0], colors[1], colors[2], colors[3]};
 }
 
 END_NAMESPACE

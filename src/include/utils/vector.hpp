@@ -46,14 +46,22 @@ struct Vector
     constexpr Vector(T X, T Y)
         : x(X), y(Y) {}
 
-    // Copy Constructor
     template<typename U>
     constexpr Vector(const Vector<U>& vector)
         : x(static_cast<T>(vector.x)), y(static_cast<T>(vector.y)) {}
-
+    
     // ------------------------------------------------------------ //
 
     // Operator overloads
+    template<typename U>
+    Vector<T>& operator=(const Vector<U>& rhs) 
+    {
+        x = rhs.x;
+        y = rhs.y;
+
+        return *this;
+    }
+
     template<typename U>
     Vector<T>& operator+(const Vector<U>& rhs) 
     {

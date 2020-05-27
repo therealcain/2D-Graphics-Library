@@ -1,8 +1,6 @@
 #include "../src/include/gfx"
 #include <string>
 
-// TODO fix set_pixel
-
 class Win 
     : public gfx::Renderer, 
              gfx::GLFunctions
@@ -31,14 +29,17 @@ public:
         auto mousepos = gfx::Mouse::motion(get_renderer());
         std::cout << spr.get_pixel(get_renderer(), mousepos) << std::endl;;
 
-        for(size_t y = 0; y < spr.get_texture_size().height; y++)
+        if(gfx::Mouse::button_pressed(get_renderer(), gfx::Mouse::Button::Left))
         {
-            for(size_t x = 0; x < spr.get_texture_size().width; x++)
-                spr.set_pixel(y, x, gfx::Color(100, 0, 255));
+            for(size_t y = 0; y < spr.get_texture_size().height; y++)
+            {
+                for(size_t x = 0; x < spr.get_texture_size().width; x++)
+                    spr.set_pixel(x, y, gfx::Color(100, 0, 255));
+            }
         }
 
         double framerate = get_framerate();
-        set_title(std::to_string(framerate) + " ns");
+        set_title(std::to_string(framerate) + " ms");
 
         swap_buffers();
     }

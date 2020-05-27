@@ -20,6 +20,7 @@ class Transformation
 {
 public:
     Transformation();
+    virtual ~Transformation() = default;
 
     // ------------------------------------------------------------ //
     

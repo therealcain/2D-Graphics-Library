@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.7)
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_BUILD_TYPE Release)
 
@@ -33,4 +34,7 @@ if (UNIX)
     add_executable(multiple_windows multiple_windows.cpp ${GFX_FILES})
     target_link_libraries(multiple_windows ${OPENGL_LIBRARIES} ${X11_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 
-endif()
+    add_executable(loading_image loading_image.cpp ${GFX_FILES})
+    target_link_libraries(loading_image ${OPENGL_LIBRARIES} ${X11_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+
+    endif()

@@ -44,6 +44,20 @@ public:
           b(blue  >= MAX_COLORS ? MAX_COLORS : blue), 
           a(alpha >= MAX_COLORS ? MAX_COLORS : alpha) {}
 
+    template<typename T, typename = typename std::enable_if<std::is_arithmetic<T>::value>::type>
+    constexpr Color(T red, T green, T blue, T alpha)
+        : r(static_cast<unsigned int>(red   >= MAX_COLORS ? MAX_COLORS : red)), 
+          g(static_cast<unsigned int>(green >= MAX_COLORS ? MAX_COLORS : green)), 
+          b(static_cast<unsigned int>(blue  >= MAX_COLORS ? MAX_COLORS : blue)), 
+          a(static_cast<unsigned int>(alpha >= MAX_COLORS ? MAX_COLORS : alpha)) {}
+
+    template<typename T, typename = typename std::enable_if<std::is_arithmetic<T>::value>::type>
+    constexpr Color(T red, T green, T blue)
+        : r(static_cast<unsigned int>(red   >= MAX_COLORS ? MAX_COLORS : red)), 
+          g(static_cast<unsigned int>(green >= MAX_COLORS ? MAX_COLORS : green)), 
+          b(static_cast<unsigned int>(blue  >= MAX_COLORS ? MAX_COLORS : blue)) {}
+
+
     // Copy Constructor
     constexpr Color(const Color& color)
         : r(color.r), g(color.g), b(color.b), a(color.a) {}

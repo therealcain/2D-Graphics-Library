@@ -106,7 +106,7 @@ double Renderer::get_framerate() const
     auto delta_ticks = duration_cast<duration<double>>(current_ticks - start_ticks);
 
     if (delta_ticks.count() > 0)
-        return CLOCKS_PER_SEC / delta_ticks.count();
+        return 1.0 / delta_ticks.count();
 
     return 0.0;
 }
