@@ -12,6 +12,8 @@
 
 #include "transformation.hpp"
 
+#include <vector>
+
 START_NAMESPACE
 
 // Forward Declaration
@@ -50,6 +52,19 @@ public:
     void set_position(const VectorI& pos);
     void set_position(int x, int y);
     const VectorI& get_position() const;
+
+    // ------------------------------------------------------------ //
+
+    // Pixels
+    void set_pixel(const VectorUI& position, Color& color);
+    void set_pixel(const VectorUI& position, Color&& color);
+    void set_pixel(unsigned int x, unsigned int y, Color& color);
+    void set_pixel(unsigned int x, unsigned int y, Color&& color);
+
+    Color get_pixel(const Renderer& renderer, const VectorUI& position);
+    Color get_pixel(const Renderer& renderer, unsigned int x, unsigned int y);
+
+    // ------------------------------------------------------------ //
 
 #ifdef GFX_ACCESS_EVERYTHING
 public:

@@ -3,8 +3,7 @@
 // https://therealcain.github.io/website/                //
 ///////////////////////////////////////////////////////////
 // This header includes all of the essential headers for //
-// this library, also it defines few macros for the      //
-// user.                                                 //
+// this library.                                         //
 ///////////////////////////////////////////////////////////
 
 #ifndef GFX_HPP
@@ -12,6 +11,11 @@
 
 // Link all of the windows libraries
 #ifdef _WIN32
+// Unicode
+#ifndef UNICODE
+#define UNICODE
+#endif // Unicode
+// Windows Headers
 #include "windows/input/keyboard.hpp"
 #include "windows/input/mouse.hpp"
 #include "windows/renderer.hpp"
@@ -44,6 +48,5 @@
 #include "draws/circle.hpp"
 #include "draws/shape.hpp"
 #include "draws/sprite.hpp"
-
 
 #endif // GFX_HPP

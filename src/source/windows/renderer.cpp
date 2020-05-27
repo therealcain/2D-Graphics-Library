@@ -270,8 +270,6 @@ bool Renderer::handle_events() noexcept
             // Call the unused update function every 1 miliseconds
             SetTimer(m_hwnd, 0, 1, reinterpret_cast<TIMERPROC>(&force_update));
 
-            
-
             // Translate virtual keys and send the message
             // to the window procedure
             TranslateMessage(&msg);

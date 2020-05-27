@@ -18,7 +18,7 @@
 
 // C++11 does not support [[maybe_unused]]
 #if defined(_GNUC__) || defined(__clang__) || defined(__MINGW32__)
-#define GFX_UNUSED __attribute__((gnu::unused))
+#define GFX_UNUSED gnu::unused
 #else
 #define GFX_UNUSED
 #endif
@@ -38,6 +38,10 @@ extern void abort_null(void* ptr, const std::string& str);
 // Map color to opengl color format
 constexpr float rgba_to_gl(unsigned int color) {
     return color / 255.f;
+}
+// Map color from GL format to sRGBA color format
+constexpr unsigned int gl_to_rgba(float color) {
+    return static_cast<unsigned int>(color * 255);
 }
 
 END_NAMESPACE

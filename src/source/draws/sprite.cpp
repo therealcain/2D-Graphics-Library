@@ -62,15 +62,13 @@ void Sprite::create(const std::string& path, unsigned int width, unsigned int he
     // Fetching all of the data from the image
     data = stbi_load(path.c_str(), &width_, &height_, &nr_channels, 0);
 
-    original_geometry = {static_cast<unsigned int>(width_), static_cast<unsigned int>(height_)};
-
     if (data)
     {
         // Creating a texture based on this data
         glGenTextures(1, &id);
         glBindTexture(GL_TEXTURE_2D, id);
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-        glTexImage2D(GL_TEXTURE_2D, 0, 4, original_geometry.width, original_geometry.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+        glTexImage2D(GL_TEXTURE_2D, 0, 4, width_, height_, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -80,8 +78,10 @@ void Sprite::create(const std::string& path, unsigned int width, unsigned int he
         // to opengl
         stbi_image_free(data);
 
+
         m_geometry = {width, height};
         m_position = {x, y};
+        original_geometry = {static_cast<unsigned int>(width_), static_cast<unsigned int>(height_)};
     }
     else
         throw std::logic_error("Failed to load texture!");
@@ -119,6 +119,50 @@ void Sprite::set_position(int x, int y) {
 
 const VectorI& Sprite::get_position() const {
     return m_position;
+}
+
+// ------------------------------------------------------------ //
+
+void Sprite::set_pixel(const VectorUI& pos, Color& color) {
+    set_pixel(pos.x, pos.y, std::move(color));
+}   
+
+void Sprite::set_pixel(const VectorUI& pos, Color&& color) {
+    set_pixel(pos.x, pos.y, std::move(color));
+}
+
+void Sprite::set_pixel(unsigned int x, unsigned int y, Color& color) {
+    set_pixel(x, y, std::move(color));
+}
+
+void Sprite::set_pixel(unsigned int x, unsigned int y, Color&& color) 
+{
+    GLfloat colors[4] = { 
+        rgba_to_gl(color.r), 
+        rgba_to_gl(color.g), 
+        rgba_to_gl(color.b), 
+        rgba_to_gl(color.a) 
+    };
+
+    glBindTexture(GL_TEXTURE_2D, id);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, 1, 1, GL_RGBA, GL_FLOAT, &colors);
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+Color Sprite::get_pixel(const Renderer& renderer, const VectorUI& pos) {
+    return get_pixel(renderer, pos.x, pos.y);
+}
+
+Color Sprite::get_pixel(const Renderer& renderer, unsigned int x, unsigned int y) {
+    GLfloat colors[4];
+    glReadPixels(
+        x, renderer.get_geometry().height - y - 1, 
+        1, 1,
+        GL_RGBA,
+        GL_FLOAT,
+        &colors);
+    
+    return {gl_to_rgba(colors[0]), gl_to_rgba(colors[1]), gl_to_rgba(colors[2]), gl_to_rgba(colors[3])};
 }
 
 END_NAMESPACE

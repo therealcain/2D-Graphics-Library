@@ -25,28 +25,33 @@ bool Mouse::button_pressed(Renderer& renderer, Button button)
 VectorI Mouse::motion(Renderer& renderer)
 {
     static POINT last_p;
-    POINT p;
-    if (GetCursorPos(&p))
+    CURSORINFO cursor_info { 0 };
+    cursor_info.cbSize = sizeof(cursor_info);
+
+    // Extracting the cursor position
+    if(GetCursorInfo(&cursor_info))
     {
+        // Extracting the window position
         RECT rect;
         GetWindowRect(renderer.m_hwnd, &rect);
 
-        if(p.x       <= rect.right  &&
-           rect.left <= p.x         &&
-           p.y       <= rect.bottom &&
-           rect.top  <= p.y)
-            {
-                if (ScreenToClient(renderer.m_hwnd, &p))
-                {
-                    last_p = p;
-                    return { p.x, p.y };
-                }
-            }
-            else
-                return { last_p.x, last_p.y };
+        // Checks if the mouse is on the screen
+        // ( I KNOW ITS NASTY ), but other functions were not handling from
+        // the top position
+        if(cursor_info.ptScreenPos.x       <= rect.right                &&
+           rect.left                       <= cursor_info.ptScreenPos.x &&
+           cursor_info.ptScreenPos.y       <= rect.bottom               &&
+           rect.top                        <= cursor_info.ptScreenPos.y)
+           {
+               // updating the last position, so when the mouse leave the window
+               // it would return the last position it was
+               last_p = { cursor_info.ptScreenPos.x - rect.left, cursor_info.ptScreenPos.y - rect.top };
+               
+               return { last_p.x, last_p.y };
+           }
     }
 
-    return { 0, 0 };
+    return {last_p.x, last_p.y};
 }
 
 END_NAMESPACE
