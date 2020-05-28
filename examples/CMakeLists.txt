@@ -16,6 +16,7 @@ if (UNIX)
 
     set(GFX_FILES
         ../src/source/glfunctions.cpp
+        ../src/source/parent_renderer.cpp
         ../src/source/linux/renderer.cpp
         ../src/source/linux/input/keyboard.cpp
         ../src/source/linux/input/mouse.cpp

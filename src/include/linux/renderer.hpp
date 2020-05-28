@@ -17,6 +17,7 @@
 
 #include "../utils/utils.hpp"
 #include "../utils/geometry.hpp"
+#include "../parent_renderer.hpp"
 
 #include <X11/X.h>
 #include <X11/Xlib.h>
@@ -26,56 +27,33 @@
 
 #include <GL/glx.h>
 
-#include <chrono>
-#include <atomic>
-
 START_NAMESPACE
 
-class Renderer
+class Renderer : public ParentRenderer
 {
 public:
     // Constructors
-    explicit Renderer(const Geometry& geometry, const std::string& title);
     explicit Renderer(const Geometry& geometry);
-    explicit Renderer(unsigned int width, unsigned int height, const std::string& title);
     explicit Renderer(unsigned int width, unsigned int height);
     ~Renderer();
 
-// ------------------------------------------------------------ //
-
-    Renderer& get_renderer() noexcept;
-
-// ------------------------------------------------------------ //
-
-    // This function is being called every tick
-    virtual void on_update() = 0;
 
 // ------------------------------------------------------------ //
 
 public:
-    // Change the title of the window
-    void set_title(const std::string& title);
-    // Get the title of the window
-    const std::string& get_title() const noexcept;
+    void swap_buffers() override;
 
-    // Get the width and height of the window
-    const Geometry& get_geometry() const noexcept;
-    
-    // Fetch the next event if it was failed
-    // the program will shutdown
-    bool is_running() noexcept;
+// ------------------------------------------------------------ //
 
-    // Forces a close on the window
-    void close() noexcept;
+    Renderer& get_renderer() override;
 
-    // Swapping both GPU buffers
-    void swap_buffers() noexcept;
+// ------------------------------------------------------------ //
 
-    // Returning the framerate in ms
-    double get_framerate() const;
+    void set_title(const std::string& title) override;
 
-    // Returns if the current thread is working
-    bool is_focused() const;
+// ------------------------------------------------------------ //
+
+    bool is_running() override;
 
 // ------------------------------------------------------------ //
 
@@ -118,27 +96,11 @@ private:
     // Events handler
     XEvent ev;
 
-    // Window width and height
-    Geometry m_geometry;
-    
-    // It's job is to get if the window is running
-    bool running;
-
-    // The window title
-    std::string m_title;
-
 private: // This is never being accessed no matter what
     // This is the mouse handlers that fetched from the
     // window events handler
     VectorI mouse_pos; 
     unsigned int button_pressed;
-
-    // Lock on the focues window
-    std::atomic<bool> focused;
-    
-    // This is the frame rate ticks
-    // It's cannot be touched from the user
-    std::chrono::high_resolution_clock::time_point start_ticks;
 
     friend class Mouse;
     friend class Keyboard;

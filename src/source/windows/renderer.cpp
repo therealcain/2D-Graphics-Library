@@ -9,29 +9,15 @@
 
 START_NAMESPACE
 
-Renderer::Renderer(const Geometry& geometry, const std::string& title)
-    : m_geometry(geometry)
-{
-    create();
-    set_title(title);
-}
-
 Renderer::Renderer(const Geometry& geometry)
-    : m_geometry(geometry)
 {
+    /*Parent*/ m_geometry = geometry;
     create();
-}
-
-Renderer::Renderer(unsigned int width, unsigned int height, const std::string& title)
-    : m_geometry(width, height)
-{
-    create();
-    set_title(title);
 }
 
 Renderer::Renderer(unsigned int width, unsigned int height)
-    : m_geometry(width, height)
 {
+    /*Parent*/ m_geometry = {width, height};
     create();
 }
 
@@ -47,14 +33,13 @@ Renderer::~Renderer()
 
 // ------------------------------------------------------------ //
 
-Renderer& Renderer::get_renderer() noexcept
-{
+Renderer& Renderer::get_renderer() /*override*/ {
     return *this;
 }
 
 // ------------------------------------------------------------ //
 
-void Renderer::set_title(const std::string& title)
+void Renderer::set_title(const std::string& title) /*override*/
 {
     std::wstring converted_title(title.begin(), title.end());
 
@@ -64,19 +49,9 @@ void Renderer::set_title(const std::string& title)
     m_title = title;
 }
 
-const std::string& Renderer::get_title() const noexcept {
-    return m_title;
-}
-
 // ------------------------------------------------------------ //
 
-const Geometry& Renderer::get_geometry() const noexcept {
-    return m_geometry;
-}
-
-// ------------------------------------------------------------ //
-
-bool Renderer::is_running() noexcept
+bool Renderer::is_running() /*override*/
 {
     start_ticks = std::chrono::high_resolution_clock::now();
     return handle_events();
@@ -84,13 +59,7 @@ bool Renderer::is_running() noexcept
 
 // ------------------------------------------------------------ //
 
-void Renderer::close() noexcept {
-    running = false;
-}
-
-// ------------------------------------------------------------ //
-
-void Renderer::swap_buffers() noexcept
+void Renderer::swap_buffers() /*override*/
 {
     HDC hdc = GetDC(m_hwnd);
     SwapBuffers(hdc);
@@ -99,29 +68,7 @@ void Renderer::swap_buffers() noexcept
 
 // ------------------------------------------------------------ //
 
-double Renderer::get_framerate() const
-{
-    using namespace std::chrono;
-
-    high_resolution_clock::time_point current_ticks = high_resolution_clock::now();
-
-    auto delta_ticks = duration_cast<duration<double>>(current_ticks - start_ticks);
-
-    if (delta_ticks.count() > 0)
-        return 1.0 / delta_ticks.count();;
-
-    return 0.0;
-}
-
-// ------------------------------------------------------------ //
-
-bool Renderer::is_focused() const {
-    return focused;
-}
-
-// ------------------------------------------------------------ //
-
-void Renderer::create() noexcept
+void Renderer::create()
 {
     init_members();
     

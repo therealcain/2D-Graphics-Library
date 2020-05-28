@@ -18,65 +18,42 @@
 #include "../utils/utils.hpp"
 #include "../utils/geometry.hpp"
 
-#include <windows.h>
-#include <chrono>
+#include "../parent_renderer.hpp"
 
-#include <atomic>
+#include <windows.h>
 
 START_NAMESPACE
 
-class Renderer
+class Renderer : public ParentRenderer
 {
 public:
     // Constructors
-    explicit Renderer(const Geometry& geometry, const std::string& title);
     explicit Renderer(const Geometry& geometry);
-    explicit Renderer(unsigned int width, unsigned int height, const std::string& title);
     explicit Renderer(unsigned int width, unsigned int height);
     ~Renderer();
 
 // ------------------------------------------------------------ //
 
-    // return a reference to itself
-    Renderer& get_renderer() noexcept;
-
-// ------------------------------------------------------------ //
-
-    // This function is being called every tick
-    virtual void on_update() = 0;
-
-// ------------------------------------------------------------ //
-
 public:
-    // Change the title of the window
-    void set_title(const std::string& title);
-    // Get the title of the window
-    const std::string& get_title() const noexcept;
+    void swap_buffers() override;
 
-    // Get the width and height of the window
-    const Geometry& get_geometry() const noexcept;
+// ------------------------------------------------------------ //
 
-    // Fetch the next event if it was failed
-    // the program will shutdown
-    bool is_running() noexcept;
+    Renderer& get_renderer() override;
 
-    // Forces a close on the window
-    void close() noexcept;
+// ------------------------------------------------------------ //
 
-    // Swapping both GPU buffers
-    void swap_buffers() noexcept;
+    void set_title(const std::string& title) override;
 
-    // Returning the framerate in ms
-    double get_framerate() const;
+// ------------------------------------------------------------ //
 
-    // Returning if the current window is active
-    bool is_focused() const;
+    bool is_running() override;
 
 // ------------------------------------------------------------ //
 
 private:
     // Calling all of the creation functions
-    void create() noexcept;
+    void create();
 
     // Initialize all of the class members
     void init_members();
@@ -110,24 +87,10 @@ private:
     // Events
     MSG msg;
 
+// This shouldn't be accessed from the user
+private:
     // Class has been created
     bool class_registered;
-
-    // Window width and height
-    Geometry m_geometry;
-    
-    // It's job is to get if the window is running
-    bool running;
-
-    // The window title
-    std::string m_title;
-
-private: // This is never being accessed no matter what
-    // This is the frame rate ticks
-    // It's cannot be touched from the user
-    std::chrono::high_resolution_clock::time_point start_ticks;
-
-    std::atomic<bool> focused;
 
     friend class Mouse;
     friend class GLFunctions;

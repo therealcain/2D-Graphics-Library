@@ -2,33 +2,18 @@
 
 START_NAMESPACE
 
-Renderer::Renderer(const Geometry& geometry, const std::string& title)
-    : m_geometry(geometry)
-{
-    create();
-    set_title(title);
-}
-
 Renderer::Renderer(const Geometry& geometry)
-    : m_geometry(geometry)
 {
+    /*Parent*/ m_geometry = geometry;
     create();
-}
-
-Renderer::Renderer(unsigned int width, unsigned int height, const std::string& title)
-    : m_geometry(width, height)
-{
-    create();
-    set_title(title);
 }
 
 Renderer::Renderer(unsigned int width, unsigned int height)
-    : m_geometry(width, height)
 {
+    /*Parent*/ m_geometry = {width, height};
     create();
 }
 
-// Destructor
 Renderer::~Renderer()
 {
     // Destroying the window and closing connection to X Server
@@ -38,14 +23,13 @@ Renderer::~Renderer()
 
 // ------------------------------------------------------------ //
 
-Renderer& Renderer::get_renderer() noexcept
-{
+Renderer& Renderer::get_renderer() /*override*/ {
     return *this;
 }
 
 // ------------------------------------------------------------ //
 
-void Renderer::set_title(const std::string& title)
+void Renderer::set_title(const std::string& title) /*override*/
 {
     // Changing the title variable into the title argument
     XStoreName(display, window, title.c_str());
@@ -59,60 +43,22 @@ void Renderer::set_title(const std::string& title)
         reinterpret_cast<unsigned char*>(const_cast<char*>(title.c_str())), 
         title.size());
 
-    m_title = title;
-}
-
-const std::string& Renderer::get_title() const noexcept
-{
-    return m_title;
+    /*Parent*/ m_title = title;
 }
 
 // ------------------------------------------------------------ //
 
-const Geometry& Renderer::get_geometry() const noexcept
+bool Renderer::is_running() /*override*/
 {
-    return m_geometry;
-}
-
-// ------------------------------------------------------------ //
-
-bool Renderer::is_running() noexcept
-{
-    start_ticks = std::chrono::high_resolution_clock::now();
+    /*Parent*/ start_ticks = std::chrono::high_resolution_clock::now();
     handle_events();
     return running;
 }
 
 // ------------------------------------------------------------ //
 
-void Renderer::close() noexcept {
-    running = false;
-}
-
-// ------------------------------------------------------------ //
-
-void Renderer::swap_buffers() noexcept {
+void Renderer::swap_buffers() /*override*/ {
     glXSwapBuffers(display, window);
-}
-
-// ------------------------------------------------------------ //
-
-double Renderer::get_framerate() const
-{
-    using namespace std::chrono;
-
-    high_resolution_clock::time_point current_ticks = high_resolution_clock::now();
-
-    auto delta_ticks = duration_cast<duration<double>>(current_ticks - start_ticks);
-
-    if (delta_ticks.count() > 0)
-        return 1.0 / delta_ticks.count();
-
-    return 0.0;
-}
-
-bool Renderer::is_focused() const {
-    return focused;
 }
 
 // ------------------------------------------------------------ //
@@ -261,8 +207,6 @@ void Renderer::handle_events() noexcept
             else if(ev.type == ButtonPress)
                 button_pressed = ev.xbutton.button;
         }
-
-        XFlush(display);
     }
 }
 
