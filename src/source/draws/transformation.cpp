@@ -3,7 +3,7 @@
 START_NAMESPACE
 
 Transformation::Transformation()
-    : m_translate(1, 1),
+    : m_translate(0, 0),
       m_scale(1.f, 1.f),
       m_degree(0) {}
 

@@ -38,4 +38,7 @@ if (UNIX)
     add_executable(loading_image loading_image.cpp ${GFX_FILES})
     target_link_libraries(loading_image ${OPENGL_LIBRARIES} ${X11_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 
-    endif()
+    add_executable(bubble_sort_visualization bubble_sort_visualization.cpp ${GFX_FILES})
+    target_link_libraries(bubble_sort_visualization ${OPENGL_LIBRARIES} ${X11_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+
+endif()
