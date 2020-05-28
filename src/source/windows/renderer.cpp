@@ -46,14 +46,14 @@ void Renderer::set_title(const std::string& title) /*override*/
     // SetWindowText is expecting wide characters string
     SetWindowText(m_hwnd, converted_title.c_str());
 
-    m_title = title;
+    /*Parent*/ m_title = title;
 }
 
 // ------------------------------------------------------------ //
 
 bool Renderer::is_running() /*override*/
 {
-    start_ticks = std::chrono::high_resolution_clock::now();
+    /*Parent*/ start_ticks = std::chrono::high_resolution_clock::now();
     return handle_events();
 }
 
@@ -72,7 +72,7 @@ void Renderer::create()
 {
     init_members();
     
-    running = true;
+    /*Parent*/ running = true;
 }
 
 // ------------------------------------------------------------ //
