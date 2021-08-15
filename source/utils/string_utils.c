@@ -1,4 +1,4 @@
-#include "../../include/utils/string.h"
+#include "utils/string_utils.h"
 
 #include <stdlib.h>
 #include <assert.h>
@@ -8,9 +8,9 @@ char* get_substring(const char* string, size_t begin, size_t end)
     int32_t size;
     char* substr;
 
-    size = end - begin;
-
     assert(string);
+
+    size = end - begin;
 
     if(size <= 0)
         return NULL;
@@ -45,12 +45,12 @@ const char* get_last_substring_by_delimiter(const char* string, char delimiter)
 
 /* ------------------------------------------------------------------------- */
 
-void buffer_concentrate_string(char* dest, size_t len, const char* src1, const char* src2)
+void buffer_concatenate_string(char* dest, size_t len, const char* src1, const char* src2)
 {
     assert(len > strlen(src1) + strlen(src2));
     assert(dest);
     
-    strcat(dest, src1);
+    strcpy(dest, src1);
     strcat(dest, src2);
 }
 

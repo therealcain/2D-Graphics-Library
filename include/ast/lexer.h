@@ -1,8 +1,8 @@
 #ifndef LEXER_GUARD_H
 #define LEXER_GUARD_H
 
-#include "../utils/stdbool.h"
-#include "../utils/stdint.h"
+#include "../utils/my_bool.h"
+#include "../utils/my_inttypes.h"
 #include "../opcodes.h"
 #include "../labels.h"
 
@@ -15,10 +15,7 @@ typedef enum {
 
 typedef struct {
     LexerTokenTypes type;
-    union {
-        uint8_t     venum;
-        const char* string;
-    } data;
+    void*           p_data;
 } LexerTokenVariant;
 
 typedef struct {

@@ -3,9 +3,9 @@
 
 #include "lexer.h"
 
-#include "../utils/stdbool.h"
-#include "../utils/stdint.h"
-#include "../utils/vector.h"
+#include "../utils/my_bool.h"
+#include "../utils/my_inttypes.h"
+#include "../utils/my_vector.h"
 
 /* Looking for parsing errors. */
 extern bool parser_validate_line(const LexerTokens* p_tokens, uint32_t line);

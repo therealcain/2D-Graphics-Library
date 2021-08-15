@@ -1,9 +1,7 @@
-#include "../../include/utils/debug_print.h"
+#include "utils/debug_print.h"
 
 #include <stdio.h>
 #include <stdarg.h>
-
-#define DEBUG_PREFIX "DEBUG LOGGER"
 
 /* Print the message in a color mode. */
 static

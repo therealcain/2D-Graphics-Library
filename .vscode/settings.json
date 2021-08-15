@@ -9,6 +9,8 @@
         "stdio.h": "c",
         "debug_logger.h": "c",
         "debug_print.h": "c",
-        "filesystem.h": "c"
+        "filesystem.h": "c",
+        "my_bool.h": "c",
+        "predefs.h": "c"
     },
 }
