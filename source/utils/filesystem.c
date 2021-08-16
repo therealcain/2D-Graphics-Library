@@ -12,30 +12,31 @@ static const char seperator = '/';
 
 /* ------------------------------------------------------------------------- */
 
-char* get_filename_without_extension_from_path(const char* path)
+char* get_filename_without_extension_from_path( const char* path )
 {
-    const char* extension = get_filename_extension(path);
-    const char* filename  = get_last_substring_by_delimiter(path, seperator);
+    const char* extension = get_filename_extension( path );
+    const char* filename  = get_last_substring_by_delimiter( path, seperator );
 
-    return extension == path ? 
-        copy_string(filename) : 
-            get_substring(filename, 0, strlen(filename) - strlen(extension) - 1);
+    return extension == path ?
+        copy_string( filename ) :
+        get_substring( filename, 0, strlen( filename ) - strlen( extension ) - 1 );
 }
 
 /* ------------------------------------------------------------------------- */
 
-const char* get_filename_extension(const char* path) {
-    return get_last_substring_by_delimiter(path, '.');
+const char* get_filename_extension( const char* path )
+{
+    return get_last_substring_by_delimiter( path, '.' );
 }
 
 /* ------------------------------------------------------------------------- */
 
-bool can_read_file(const char* path)
+bool can_read_file( const char* path )
 {
     FILE* fp;
-    if((fp = fopen(path, "rb")) != NULL)
+    if( (fp = fopen( path, "rb" )) != NULL )
     {
-        fclose(fp);
+        fclose( fp );
         return true;
     }
 

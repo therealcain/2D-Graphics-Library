@@ -5,7 +5,7 @@
 
 #ifndef __cplusplus
 # ifdef COMPILER_ANSI_C
-   typedef enum { false = 0, true } bool;
+typedef enum { false = 0, true } bool;
 # else
 #  include <stdbool.h>
 # endif

@@ -3,7 +3,7 @@
 #include "utils/my_inttypes.h"
 #include <string.h>
 
-static const OpcodeInfo lookup_table[] = {
+static const OpcodeInfo lookup_table [] ={
     { "add" , OPCODE_add , 3 },
     { "sub" , OPCODE_sub , 3 },
     { "and" , OPCODE_and , 3 },
@@ -32,18 +32,18 @@ static const OpcodeInfo lookup_table[] = {
     { "stop", OPCODE_stop, 0 }
 };
 
-static const size_t lookup_table_size = sizeof(lookup_table) / sizeof(OpcodeInfo);
+static const size_t lookup_table_size = sizeof( lookup_table ) / sizeof( OpcodeInfo );
 
 /* ------------------------------------------------------------------------- */
 
-const OpcodeInfo* get_opcode_info_from_str(const char* str)
+const OpcodeInfo* get_opcode_info_from_str( const char* str )
 {
     size_t i;
-    for(i = 0; i < lookup_table_size; ++i)
+    for( i = 0; i < lookup_table_size; ++i )
     {
-        const OpcodeInfo* lookup = &lookup_table[i];
+        const OpcodeInfo* lookup = &lookup_table[ i ];
 
-        if(strcmp(lookup->name, str) == 0)
+        if( strcmp( lookup->name, str ) == 0 )
             return lookup;
     }
 
@@ -52,14 +52,14 @@ const OpcodeInfo* get_opcode_info_from_str(const char* str)
 
 /* ------------------------------------------------------------------------- */
 
-const OpcodeInfo* get_opcode_info_from_opcode(OpcodeTypes type)
+const OpcodeInfo* get_opcode_info_from_opcode( OpcodeTypes type )
 {
     size_t i;
-    for(i = 0; i < lookup_table_size; ++i)
+    for( i = 0; i < lookup_table_size; ++i )
     {
-        const OpcodeInfo* lookup = &lookup_table[i];
+        const OpcodeInfo* lookup = &lookup_table[ i ];
 
-        if(type == lookup->opcode)
+        if( type == lookup->opcode )
             return lookup;
     }
 

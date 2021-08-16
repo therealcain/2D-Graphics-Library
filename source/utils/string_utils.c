@@ -3,41 +3,41 @@
 #include <stdlib.h>
 #include <assert.h>
 
-char* get_substring(const char* string, size_t begin, size_t end)
+char* get_substring( const char* string, size_t begin, size_t end )
 {
     int32_t size;
     char* substr;
 
-    assert(string);
+    assert( string );
 
     size = end - begin;
 
-    if(size <= 0)
+    if( size <= 0 )
         return NULL;
 
-    substr = (char*)malloc(size + 1);
-    if(substr == NULL)
+    substr = (char*)malloc( size + 1 );
+    if( substr == NULL )
         return NULL;
 
-    strncpy(substr, string + begin, size);
-    substr[size] = '\0';
+    strncpy( substr, string + begin, size );
+    substr[ size ] = '\0';
 
     return substr;
 }
 
 /* ------------------------------------------------------------------------- */
 
-const char* get_last_substring_by_delimiter(const char* string, char delimiter)
+const char* get_last_substring_by_delimiter( const char* string, char delimiter )
 {
     const char* ret;
-    
-    assert(string);
 
-    ret = strrchr(string, delimiter);
+    assert( string );
 
-    if(ret == NULL)
+    ret = strrchr( string, delimiter );
+
+    if( ret == NULL )
         ret = string;
-    else 
+    else
         ret++;
 
     return ret;
@@ -45,17 +45,18 @@ const char* get_last_substring_by_delimiter(const char* string, char delimiter)
 
 /* ------------------------------------------------------------------------- */
 
-void buffer_concatenate_string(char* dest, size_t len, const char* src1, const char* src2)
+void buffer_concatenate_string( char* dest, size_t len, const char* src1, const char* src2 )
 {
-    assert(len > strlen(src1) + strlen(src2));
-    assert(dest);
-    
-    strcpy(dest, src1);
-    strcat(dest, src2);
+    assert( len > strlen( src1 ) + strlen( src2 ) );
+    assert( dest );
+
+    strcpy( dest, src1 );
+    strcat( dest, src2 );
 }
 
 /* ------------------------------------------------------------------------- */
 
-char* copy_string(const char* string) {
-    return get_substring(string, 0, strlen(string));
+char* copy_string( const char* string )
+{
+    return get_substring( string, 0, strlen( string ) );
 }

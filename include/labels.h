@@ -15,18 +15,18 @@ typedef enum {
 
 /* ------------------------------------------------------------------------- */
 
-typedef struct { 
-    const char* name; 
+typedef struct {
+    const char* name;
     LabelTypes  label;
 } LabelInfo;
 
 /* ------------------------------------------------------------------------- */
 
 /* A function to retrieve the label info based on a string. */
-extern const LabelInfo* get_label_info_from_str(const char* str);
+extern const LabelInfo* get_label_info_from_str( const char* str );
 
 /* A function to retrieve the label info based on a type. */
-extern const LabelInfo* get_label_info_from_label(LabelTypes type);
+extern const LabelInfo* get_label_info_from_label( LabelTypes type );
 
 #endif /* LABELS_GUARD_H */
 

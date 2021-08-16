@@ -3,7 +3,7 @@
 #include "utils/my_inttypes.h"
 #include <string.h>
 
-static const LabelInfo lookup_table[] = {
+static const LabelInfo lookup_table [] ={
     { ".db"     , LABEL_data_byte  },
     { ".dw"     , LABEL_data_word  },
     { ".dh"     , LABEL_data_dword },
@@ -12,18 +12,18 @@ static const LabelInfo lookup_table[] = {
     { ".extern" , LABEL_extern     }
 };
 
-static const size_t lookup_table_size = sizeof(lookup_table) / sizeof(LabelInfo);
+static const size_t lookup_table_size = sizeof( lookup_table ) / sizeof( LabelInfo );
 
 /* ------------------------------------------------------------------------- */
 
-const LabelInfo* get_label_info_from_str(const char* str)
+const LabelInfo* get_label_info_from_str( const char* str )
 {
     size_t i;
-    for(i = 0; i < lookup_table_size; i++)
+    for( i = 0; i < lookup_table_size; i++ )
     {
-        const LabelInfo* lookup = &lookup_table[i];
+        const LabelInfo* lookup = &lookup_table[ i ];
 
-        if(strcmp(lookup->name, str) == 0)
+        if( strcmp( lookup->name, str ) == 0 )
             return lookup;
     }
 
@@ -32,14 +32,14 @@ const LabelInfo* get_label_info_from_str(const char* str)
 
 /* ------------------------------------------------------------------------- */
 
-const LabelInfo* get_label_info_from_label(LabelTypes type)
+const LabelInfo* get_label_info_from_label( LabelTypes type )
 {
     size_t i;
-    for(i = 0; i < lookup_table_size; i++)
+    for( i = 0; i < lookup_table_size; i++ )
     {
-        const LabelInfo* lookup = &lookup_table[i];
+        const LabelInfo* lookup = &lookup_table[ i ];
 
-        if(type == lookup->label)
+        if( type == lookup->label )
             return lookup->name;
     }
 
